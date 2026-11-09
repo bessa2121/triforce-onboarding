@@ -1,0 +1,55 @@
+/* Tema "Hyrule pixel": molduras escalonadas (sem border-radius), madeira + ouro, tipografia pixelada. */
+:root{--ink:#162238;--ink2:#0d1526;--gold:#e8b53a;--gold2:#fbe27a;--gold0:#8a5a1c;--wood:#7a4a24;--wood0:#3a2110;--cream:#fff2cc}
+body{image-rendering:pixelated}
+img.pix-icon,img.heart-icon,img.pix-big,#hud-triforce{image-rendering:pixelated;image-rendering:crisp-edges}
+.heart-icon{width:33px;height:30px}
+#hud-triforce{width:44px;height:34px}
+img.pix-icon{width:24px;height:18px;display:block}
+img.pix-big{width:132px;height:102px}
+/* moldura escalonada reutilizável */
+.hud-panel,.modal-card,#dialog-box{border:0!important;border-radius:0!important;
+  background:var(--ink);
+  box-shadow:0 -4px 0 0 var(--ink2),0 4px 0 0 var(--ink2),-4px 0 0 0 var(--ink2),4px 0 0 0 var(--ink2),
+    inset 0 0 0 4px var(--gold),inset 0 0 0 6px var(--gold0),inset 0 0 0 8px var(--ink2),8px 10px 0 0 rgba(0,0,0,.45)!important}
+.hud-panel{background:linear-gradient(var(--wood0),var(--wood0));padding:12px 16px;background-color:var(--wood0)}
+.hud-panel{background-image:repeating-linear-gradient(0deg,rgba(0,0,0,.18) 0 2px,transparent 2px 6px)}
+.hearts-row{gap:2px}
+.mission-badge{color:var(--gold2)!important;font-size:9px!important;letter-spacing:1px}
+.mission-title{font-size:20px!important;color:var(--cream)!important}
+.level-badge{color:#9fe0ff!important}
+/* barra de XP segmentada (estilo medidor de magia) */
+.xp-bar-wrap{border:0!important;border-radius:0!important;height:12px!important;background:var(--ink2)!important;box-shadow:0 0 0 2px var(--ink2),0 0 0 4px var(--gold)}
+.xp-bar-fill{background-color:#58c25a!important;background-image:repeating-linear-gradient(90deg,transparent 0 6px,rgba(0,0,0,.35) 6px 8px),linear-gradient(#9af07a 0 3px,transparent 3px)!important;transition:width .35s steps(8)!important}
+/* botões de madeira */
+.retro-btn{border:0!important;border-radius:0!important;background:var(--wood)!important;color:var(--cream)!important;text-shadow:2px 2px 0 var(--wood0);
+  box-shadow:0 -3px 0 0 var(--wood0),0 3px 0 0 var(--wood0),-3px 0 0 0 var(--wood0),3px 0 0 0 var(--wood0),inset 0 3px 0 0 #a8723a,inset 0 -3px 0 0 #54311a!important;padding:10px 14px!important}
+.retro-btn:hover{background:#8f5a2c!important}
+.retro-btn:active{transform:translateY(3px)}
+.retro-btn.primary{background:#2f58a6!important;box-shadow:0 -3px 0 0 #14284f,0 3px 0 0 #14284f,-3px 0 0 0 #14284f,3px 0 0 0 #14284f,inset 0 3px 0 0 #5f8be0,inset 0 -3px 0 0 #1d3a75!important}
+.retro-btn.gold{background:var(--gold)!important;color:var(--wood0)!important;text-shadow:none;box-shadow:0 -3px 0 0 var(--gold0),0 3px 0 0 var(--gold0),-3px 0 0 0 var(--gold0),3px 0 0 0 var(--gold0),inset 0 3px 0 0 var(--gold2),inset 0 -3px 0 0 #b57d1c!important}
+/* diálogo */
+#dialog-box{padding:22px 26px 18px!important;bottom:22px!important}
+#dialog-portrait{width:88px!important;height:88px!important;border:0!important;border-radius:0!important;box-shadow:0 0 0 3px var(--ink2),0 0 0 6px var(--gold),0 0 0 9px var(--ink2);margin:4px 6px 0 4px;image-rendering:pixelated}
+.dialog-header{border-bottom:0!important;position:relative}
+.dialog-header:after{content:"";position:absolute;left:0;right:0;bottom:0;height:4px;background:repeating-linear-gradient(90deg,var(--gold) 0 8px,transparent 8px 12px)}
+.dialog-speaker{color:var(--gold2)!important;text-shadow:2px 2px 0 #000}
+.dialog-role{color:#9fe0ff!important}
+.dialog-text{font-size:25px!important;color:var(--cream)!important;text-shadow:2px 2px 0 rgba(0,0,0,.6)}
+.choice-btn{border:0!important;border-radius:0!important;background:var(--ink2)!important;color:var(--cream)!important;box-shadow:inset 0 0 0 3px var(--gold0),0 0 0 3px #000!important;padding-left:30px!important;position:relative;font-size:22px!important}
+.choice-btn:hover{background:#26407a!important;box-shadow:inset 0 0 0 3px var(--gold2),0 0 0 3px #000!important}
+.choice-btn:hover:before{content:"";position:absolute;left:10px;top:50%;margin-top:-7px;width:12px;height:14px;background:var(--gold2);clip-path:polygon(0 0,50% 0,50% 14%,75% 14%,75% 28%,100% 28%,100% 72%,75% 72%,75% 86%,50% 86%,50% 100%,0 100%)}
+#dialog-next-btn{background:transparent!important;box-shadow:none!important;color:transparent!important;text-shadow:none;width:30px;height:24px;padding:0!important;position:absolute;right:26px;bottom:14px;font-size:0}
+#dialog-next-btn:after{content:"";position:absolute;inset:0;background:var(--gold2);clip-path:polygon(0 0,100% 0,100% 25%,83% 25%,83% 50%,66% 50%,66% 75%,33% 75%,33% 50%,16% 50%,16% 25%,0 25%);animation:cont .7s steps(2) infinite}
+@keyframes cont{50%{transform:translateY(5px)}}
+.dialog-footer{min-height:10px}
+/* menus */
+.modal-overlay{background:rgba(5,9,18,.82)!important}
+.modal-card{padding:30px 32px!important;background-image:repeating-linear-gradient(0deg,rgba(255,255,255,.025) 0 2px,transparent 2px 6px)}
+.modal-title{color:var(--gold2)!important;text-shadow:3px 3px 0 #000;letter-spacing:1px}
+.tab-btn{border:0!important;border-radius:0!important;background:var(--ink2)!important;box-shadow:inset 0 0 0 2px var(--gold0)}
+.tab-btn.active{background:var(--wood)!important;box-shadow:inset 0 0 0 2px var(--gold2)!important}
+.diary-entry,.sim-card,.impact-node{border-radius:0!important;background:rgba(0,0,0,.28)!important;border:0!important;box-shadow:inset 0 0 0 2px var(--gold0),inset 4px 0 0 0 var(--gold)}
+#toast{border:0!important;border-radius:0!important;box-shadow:0 0 0 3px var(--ink2),0 0 0 6px var(--gold)!important;background:var(--ink)!important}
+/* controles móveis */
+.dpad-btn,.action-circle{border:0!important;background:var(--wood)!important;color:var(--cream)!important;box-shadow:0 0 0 3px var(--wood0),inset 0 3px 0 #a8723a,inset 0 -3px 0 #54311a!important;border-radius:0!important;font-family:'Press Start 2P',monospace}
+.action-circle{clip-path:polygon(0 30%,10% 30%,10% 10%,30% 10%,30% 0,70% 0,70% 10%,90% 10%,90% 30%,100% 30%,100% 70%,90% 70%,90% 90%,70% 90%,70% 100%,30% 100%,30% 90%,10% 90%,10% 70%,0 70%)}

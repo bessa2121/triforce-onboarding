@@ -1,0 +1,1 @@
+{ "name": "triforce-onboarding", "version": "2.0.0", "private": true, "scripts": { "dev": "npx serve public -l 3000" } }
