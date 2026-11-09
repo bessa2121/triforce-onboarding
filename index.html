@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="theme-color" content="#0b130b" />
+  <title>LINK: A Jornada do Primeiro Dia</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/styles/main.css" />
+  <link rel="stylesheet" href="assets/styles/theme.css" />
+</head>
+<body>
+<div id="game-wrapper">
+  <canvas id="gameCanvas"></canvas>
+  <div id="region-fade"></div>
+
+  <!-- HUD -->
+  <div id="hud" style="display:none;">
+    <div class="hud-panel">
+      <div class="hearts-row" id="hearts-container"></div>
+      <div class="stats-line">
+        <span>XP: <strong class="gold-text" id="hud-xp">0</strong></span>
+        <span>Área: <strong id="hud-area">Kokiri Village</strong></span>
+      </div>
+      <div class="xp-bar-wrap"><div class="xp-bar-fill" id="xp-bar-fill"></div></div>
+      <span class="level-badge" id="hud-level">Nv. 1 • Recém-chegado</span>
+    </div>
+
+    <div class="hud-panel hud-center">
+      <span class="mission-badge pixel-font" id="hud-mission-badge">COMEÇO</span>
+      <div class="mission-title" id="hud-mission-title">Explore e fale com a Navi</div>
+    </div>
+
+    <div class="hud-panel hud-actions">
+      <div class="triforce-hud" title="Fragmentos da Triforce"><img id="hud-triforce" alt="Triforce" src=""></div>
+      <button class="retro-btn primary" onclick="openDiary()">Diário (J)</button>
+      <button class="retro-btn" onclick="openInventory()">Bolsa</button>
+      <button class="retro-btn" id="audio-btn" onclick="AudioEngine.toggleMute()" title="Silenciar/Ativar Áudio"><img class="pix-icon" alt="Som" src=""></button>
+      <button class="retro-btn" onclick="togglePause()">Pausa</button>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div id="toast"></div>
+
+  <!-- Dialog Box -->
+  <div id="dialog-box">
+    <div class="dialog-header">
+      <span class="dialog-speaker" id="dialog-speaker">NAVI</span>
+      <span class="dialog-role" id="dialog-role">Guia da Jornada</span>
+    </div>
+    <div class="dialog-body-row">
+      <canvas id="dialog-portrait" width="64" height="64"></canvas>
+      <div class="dialog-content-col">
+        <div class="dialog-text" id="dialog-text"></div>
+        <div class="dialog-choices" id="dialog-choices"></div>
+      </div>
+    </div>
+    <div class="dialog-footer">
+      <button class="retro-btn gold" id="dialog-next-btn" onclick="advanceDialog()">Continuar [E]</button>
+    </div>
+  </div>
+
+  <!-- Mobile Controls -->
+  <div id="mobile-controls" style="display:none;">
+    <div class="dpad">
+      <div></div>
+      <button class="dpad-btn" data-dir="up">▲</button>
+      <div></div>
+      <button class="dpad-btn" data-dir="left">◀</button>
+      <div></div>
+      <button class="dpad-btn" data-dir="right">▶</button>
+      <div></div>
+      <button class="dpad-btn" data-dir="down">▼</button>
+      <div></div>
+    </div>
+    <div class="action-pad">
+      <button class="action-circle" id="mobile-interact">E</button>
+    </div>
+  </div>
+
+  <!-- Start Screen -->
+  <div class="modal-overlay active" id="start-modal">
+    <div class="modal-card" style="text-align:center;">
+      <img class="pix-big pix-all" alt="Triforce" src="" style="margin-bottom:10px">
+      <h1 class="modal-title" style="line-height:1.5">LINK: A JORNADA DO PRIMEIRO DIA</h1>
+      <p class="modal-subtitle">Uma aventura 2D de onboarding em Hyrule</p>
+      <div class="diary-entry" style="text-align:left;">
+        <strong>Controles:</strong><br>
+        • <strong>W A S D</strong> ou <strong>Setas</strong>: Mover Link<br>
+        • <strong>E</strong> ou <strong>Espaço</strong>: Conversar / Interagir<br>
+        • <strong>J</strong>: Abrir Diário de Jornada | <strong>ESC</strong>: Pausar<br>
+        • <strong>Celular:</strong> Use o direcional e o botão E na tela
+      </div>
+      <div style="display:flex; gap:12px; justify-content:center; flex-wrap:wrap; margin-top:16px;">
+        <button class="retro-btn gold" onclick="startNewGame()">Iniciar Jornada</button>
+        <button class="retro-btn primary" id="continue-btn" style="display:none;" onclick="continueGame()">Continuar Jornada</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Diary Modal -->
+  <div class="modal-overlay" id="diary-modal">
+    <div class="modal-card">
+      <h2 class="modal-title">DIÁRIO DE JORNADA</h2>
+      <div class="tabs" id="diary-tabs"></div>
+      <div id="diary-content"></div>
+      <div style="text-align:right; margin-top:14px;">
+        <button class="retro-btn gold" onclick="closeDiary()">Fechar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Inventory & Achievements Modal -->
+  <div class="modal-overlay" id="inventory-modal">
+    <div class="modal-card">
+      <h2 class="modal-title">BOLSA DE AVENTURA & CONQUISTAS</h2>
+      <div id="inventory-content"></div>
+      <div style="text-align:right; margin-top:14px;">
+        <button class="retro-btn gold" onclick="closeInventory()">Fechar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Minigame / Desafios Modal -->
+  <div class="modal-overlay" id="minigame-modal">
+    <div class="modal-card">
+      <div id="minigame-body"></div>
+      <div style="text-align:right; margin-top:14px;">
+        <button class="retro-btn" onclick="document.getElementById('minigame-modal').classList.remove('active')">Fechar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Triforce Unlock Modal -->
+  <div class="modal-overlay" id="triforce-modal">
+    <div class="modal-card" style="text-align:center;">
+      <div id="triforce-unlock-svg" style="margin-bottom:10px;"></div>
+      <h2 class="modal-title" id="triforce-unlock-title">FRAGMENTO CONQUISTADO!</h2>
+      <p class="modal-subtitle" id="triforce-unlock-desc"></p>
+      <button class="retro-btn gold" onclick="closeTriforceModal()">Continuar Jornada</button>
+    </div>
+  </div>
+
+  <!-- Pause Modal -->
+  <div class="modal-overlay" id="pause-modal">
+    <div class="modal-card" style="text-align:center;">
+      <h2 class="modal-title">JOGO PAUSADO</h2>
+      <p class="modal-subtitle">Seu progresso é salvo automaticamente.</p>
+      <div style="margin:12px auto; max-width:260px;">
+        <label style="font-size:20px; display:block; margin-bottom:6px;">Volume do Áudio</label>
+        <input type="range" min="0" max="1" step="0.1" value="0.4" onchange="AudioEngine.setVolume(this.value)" style="width:100%; accent-color:#f4c430;">
+      </div>
+      <div style="display:flex; gap:12px; justify-content:center; flex-wrap:wrap;">
+        <button class="retro-btn gold" onclick="togglePause()">Retomar</button>
+        <button class="retro-btn primary" onclick="openDiary(); togglePause();">Ver Diário</button>
+        <button class="retro-btn" onclick="resetGameConfirm()">Reiniciar Jornada</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Victory Modal -->
+  <div class="modal-overlay" id="victory-modal">
+    <div class="modal-card" style="text-align:center;">
+      <img class="pix-big pix-all" alt="Triforce" src="" style="margin-bottom:10px">
+      <h2 class="modal-title">JORNADA CONCLUÍDA!</h2>
+      <p class="modal-subtitle">Link conquistou a Triforce e agora conhece Hyrule!</p>
+      <div class="diary-entry" style="text-align:left;">
+        <strong>Navi:</strong> "Você chegou sem conhecer o caminho. Agora sabe onde encontrar ajuda, como utilizar suas ferramentas e como suas ações contribuem para o reino. Mas lembre-se: toda jornada continua com novos aprendizados!"
+      </div>
+      <div id="victory-stats" class="minigame-grid" style="text-align:left;"></div>
+      <div class="diary-entry" style="text-align:left; border-left-color:#8ecae6;">
+        <strong>Mensagem Central:</strong> "Você não precisa conhecer todo o reino no primeiro dia. Precisa saber como explorá-lo, com quem contar e como contribuir."
+      </div>
+      <button class="retro-btn gold" onclick="resetGameConfirm()">Jogar Novamente</button>
+    </div>
+  </div>
+</div>
+
+
+  <script src="src/infrastructure/audio.js"></script>
+  <script src="src/domain/state.js"></script>
+  <script src="src/domain/world.js"></script>
+  <script src="src/presentation/render/pixel.js"></script>
+  <script src="src/presentation/render/sprites.js"></script>
+  <script src="src/presentation/render/portraits.js"></script>
+  <script src="src/presentation/render/icons.js"></script>
+  <script src="src/presentation/render/world-art.js"></script>
+  <script src="src/presentation/render/renderer.js"></script>
+  <script src="src/application/hud.js"></script>
+  <script src="src/application/dialog.js"></script>
+  <script src="src/application/missions.js"></script>
+  <script src="src/application/diary.js"></script>
+  <script src="src/application/session.js"></script>
+  <script src="src/application/main.js"></script>
+  <script>
+    /* ícones estáticos (pixel art gerada em runtime) */
+    document.querySelectorAll('.pix-all').forEach(i => i.src = UI.triforce({}, true));
+    const ai = document.querySelector('#audio-btn img'); if (ai) ai.src = UI.icon('sound');
+    updateHUD && document.getElementById('hud-triforce') && (document.getElementById('hud-triforce').src = UI.triforce(gameState.triforce));
+  </script>
+</body>
+</html>

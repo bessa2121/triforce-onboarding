@@ -1,0 +1,6 @@
+MUSICA (arquivos locais, prioridade maxima; o YouTube em src/infrastructure/audio.js e so reserva):
+  kokiri.mp3   Kokiri Forest (fundo)      saria.mp3   Lost Woods / Saria's Song
+  mido.mp3     Epona's Song               talon.mp3   Song of Storms
+  zelda.mp3    Zelda's Lullaby            darunia.mp3 Gerudo Valley
+Para trocar por faixas similares, substitua os arquivos mantendo os nomes.
+Precisa de servidor http/https (npm run dev ou Vercel).
