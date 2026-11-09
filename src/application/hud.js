@@ -80,7 +80,8 @@ function updateHUD() {
   if (triImg) triImg.src = UI.triforce(gameState.triforce);
 
   let area = 'Kokiri Village';
-  if (gameState.player.x > 1230) area = 'Temple of Time';
+  if (gameState.player.y > 760) area = gameState.player.x < 900 ? 'Lost Woods' : 'Gerudo Valley';
+  else if (gameState.player.x > 1230) area = 'Temple of Time';
   else if (gameState.player.x > 580) area = 'Hyrule Field';
   document.getElementById('hud-area').textContent = area;
 

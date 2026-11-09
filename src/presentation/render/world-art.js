@@ -2,12 +2,27 @@
 const LAKE = { x: 520, y: 280, w: 70, h: 40 };          // px de arte (mundo 1040,560,140x80)
 const PLAZA_X = 625;                                      // mundo x=1250
 const zoneOf = (ax) => ax < 300 ? 'village' : ax < PLAZA_X ? 'field' : 'plaza';
+const zoneAt = (ax, ay) => ay >= 380 ? (ax < 450 ? 'woods' : 'desert') : zoneOf(ax);
+const WOODS_PAL = ['#173d26', '#1f5a33', '#2f7a43', '#5fae6a'];
 
 function grassCell(g, x, y, z, r) {
-  const base = z === 'village' ? PAL.gr1 : PAL.gr2, lite = z === 'village' ? PAL.gr2 : PAL.gr3, dark = z === 'village' ? PAL.gr0 : PAL.gr1;
+  const [base, lite, dark, tuft] = { village: [PAL.gr1, PAL.gr2, PAL.gr0, PAL.gr3], field: [PAL.gr2, PAL.gr3, PAL.gr1, PAL.gr4], woods: ['#245a30', '#2f7a43', '#173d26', '#5fae6a'] }[z];
   const t = r(); R(g, x, y, 8, 8, t < .22 ? dark : t > .8 ? lite : base);
   for (let i = 0; i < 3; i++) P(g, x + (r() * 8 | 0), y + (r() * 8 | 0), r() < .5 ? lite : dark);
-  if (r() < .55) { const px = x + 1 + (r() * 5 | 0), py = y + 2 + (r() * 5 | 0), c = z === 'village' ? PAL.gr3 : PAL.gr4; P(g, px, py, c); P(g, px - 1, py - 1, c); P(g, px + 1, py - 1, c); }
+  if (r() < .55) { const px = x + 1 + (r() * 5 | 0), py = y + 2 + (r() * 5 | 0), c = tuft; P(g, px, py, c); P(g, px - 1, py - 1, c); P(g, px + 1, py - 1, c); }
+}
+function sandCell(g, x, y, r) {
+  const t = r(); R(g, x, y, 8, 8, t < .25 ? '#c79a52' : t > .8 ? '#e6c47e' : '#d9b36a');
+  for (let i = 0; i < 3; i++) P(g, x + (r() * 8 | 0), y + (r() * 8 | 0), r() < .5 ? '#efd49a' : '#b8863f');
+  if (r() < .3) { const px = x + (r() * 5 | 0), py = y + (r() * 6 | 0); R(g, px, py, 3, 1, '#b8863f'); R(g, px + 1, py + 1, 3, 1, '#efd49a'); }
+}
+function cliff(g, x, y, w, h, r) {
+  const top = Math.min(h, 10); shadowRect(g, x, y + 3, w, h - 3); R(g, x - 1, y - 1, w + 2, h + 2, PAL.ol); R(g, x, y, w, h, '#a8552e'); R(g, x, y, w, top, '#e0a064'); R(g, x, y + top - 1, w, 1, '#7a3a20');
+  for (let ry = y + top + 4; ry < y + h - 2; ry += 6) R(g, x + (r() * 4 | 0), ry, w - 4, 1, '#8a4527');
+  for (let i = 0; i < w / 4; i++) P(g, x + (r() * w | 0), y + (r() * h | 0), '#c77a45'); R(g, x + w - 3, y + top, 3, h - top, '#7a3a20');
+}
+function trail(g, x0, x1, y0, y1, r, c1, c2) {
+  for (let y = y0; y < y1; y++) { const j = (r() * 3 | 0); R(g, x0 + j, y, x1 - x0 - j, 1, y % 6 ? c1 : c2); P(g, x0 + j, y, PAL.dirt0); P(g, x1 - 1, y, PAL.dirt0); if (r() < .1) P(g, x0 + 4 + (r() * (x1 - x0 - 8) | 0), y, PAL.st1); }
 }
 function flower(g, x, y, r) {
   const c = ['#ffffff', '#ffd84a', '#ff8fb8', '#8fbfff'][r() * 4 | 0];
@@ -19,12 +34,13 @@ function slab(g, x, y, r) {
   if (r() < .12) { let cx = x + 4, cy = y + 3; for (let i = 0; i < 6; i++) { P(g, cx, cy, '#6d7590'); cx += r() < .5 ? 1 : 0; cy++; } }
   if (r() < .1) { R(g, x + 11, y + 11, 4, 4, PAL.gr1); P(g, x + 12, y + 11, PAL.gr3); P(g, x + 13, y + 13, PAL.gr3); }
 }
-function tree(g, cx, cy, rad, r) {
+function tree(g, cx, cy, rad, r, pl) {
+  const c0 = pl ? pl[0] : PAL.gr0, c1 = pl ? pl[1] : PAL.gr1, c2 = pl ? pl[2] : PAL.gr2, c3 = pl ? pl[3] : PAL.gr3;
   R(g, cx - 5, cy + rad - 2, 11, 3, PAL.shadow);
   R(g, cx - 3, cy + rad - 5, 7, 8, PAL.ol); R(g, cx - 2, cy + rad - 5, 5, 7, PAL.wood1); R(g, cx + 1, cy + rad - 5, 2, 7, PAL.wood0); P(g, cx - 2, cy + rad - 4, PAL.wood2);
-  disc(g, cx, cy, rad + 1, PAL.ol); disc(g, cx, cy, rad, PAL.gr0); disc(g, cx - 1, cy - 1, rad - 2, PAL.gr1); disc(g, cx - 2, cy - 2, Math.max(2, rad - 4), PAL.gr2);
-  for (let i = 0; i < rad; i++) { const a = r() * 6.28, d = r() * (rad - 3); R(g, Math.round(cx - 2 + Math.cos(a) * d), Math.round(cy - 3 + Math.sin(a) * d * .7), 2, 1, PAL.gr3); }
-  for (let i = 0; i < rad; i++) P(g, cx - rad + 2 + (r() * (rad * 2 - 3) | 0), cy + rad - 4 + (r() * 3 | 0), PAL.gr0);
+  disc(g, cx, cy, rad + 1, PAL.ol); disc(g, cx, cy, rad, c0); disc(g, cx - 1, cy - 1, rad - 2, c1); disc(g, cx - 2, cy - 2, Math.max(2, rad - 4), c2);
+  for (let i = 0; i < rad; i++) { const a = r() * 6.28, d = r() * (rad - 3); R(g, Math.round(cx - 2 + Math.cos(a) * d), Math.round(cy - 3 + Math.sin(a) * d * .7), 2, 1, c3); }
+  for (let i = 0; i < rad; i++) P(g, cx - rad + 2 + (r() * (rad * 2 - 3) | 0), cy + rad - 4 + (r() * 3 | 0), c0);
   P(g, cx - rad + 3, cy - 2, PAL.gr4);
 }
 function shadowRect(g, x, y, w, h) { R(g, x + 4, y + 4, w, h, PAL.shadow); }
@@ -145,8 +161,8 @@ function carpet(g) {
 }
 
 function bakeWorld() {
-  const [c, g] = mk(900, 380), r = rng(1337);
-  for (let ty = 0; ty < 48; ty++) for (let tx = 0; tx < 113; tx++) { const z = zoneOf(tx * 8); if (z !== 'plaza') grassCell(g, tx * 8, ty * 8, z, r); }
+  const [c, g] = mk(900, 760), r = rng(1337);
+  for (let ty = 0; ty < 95; ty++) for (let tx = 0; tx < 113; tx++) { const z = zoneAt(tx * 8, ty * 8); if (z === 'desert') sandCell(g, tx * 8, ty * 8, r); else if (z !== 'plaza') grassCell(g, tx * 8, ty * 8, z, r); }
   for (let ty = 0; ty < 24; ty++) for (let tx = PLAZA_X / 16 | 0; tx < 57; tx++) slab(g, tx * 16, ty * 16, r);
   // caminho de terra com bordas orgânicas
   let t = 0, b = 0;
@@ -159,13 +175,16 @@ function bakeWorld() {
   }
   [[78, 90], [202, 90]].forEach(([dx, dy]) => { for (let y = dy; y < 168; y++) { const j = (r() * 2 | 0); R(g, dx - 4 + j, y, 9 - j, 1, y % 5 ? PAL.dirt1 : PAL.dirt2); R(g, dx - 4 + j, y, 1, 1, PAL.dirt0); R(g, dx + 4, y, 1, 1, PAL.dirt0); } });
   rr(g, 76, 296, 30, 10, PAL.dirt1);
+  trail(g, 336, 364, 200, 470, r, PAL.dirt1, PAL.dirt2); trail(g, 656, 686, 380, 470, r, PAL.dirt1, PAL.dirt2);
   carpet(g); lake(g, r);
   // decoração plana (sem colisão): flores, tufos altos, cogumelos, pedrinhas
   const blocked = (wx, wy) => obstacles.some(o => wx > o.x - 14 && wx < o.x + o.w + 14 && wy > o.y - 14 && wy < o.y + o.h + 14) ||
-    (wy > 310 && wy < 420) || (wx > 1020 && wx < 1200 && wy > 540 && wy < 660) || [...npcs, ...interactables].some(o => Math.hypot(o.x - wx, o.y - wy) < 40);
-  for (let i = 0; i < 420; i++) {
-    const wx = 60 + r() * 1680, wy = 60 + r() * 640; if (blocked(wx, wy)) continue;
-    const ax = wx / 2 | 0, ay = wy / 2 | 0, z = zoneOf(ax), k = r();
+    (wy > 310 && wy < 420) || (wy > 400 && wy < 960 && (Math.abs(wx - 700) < 50 || Math.abs(wx - 1340) < 50)) || (wx > 1020 && wx < 1200 && wy > 540 && wy < 660) || [...npcs, ...interactables].some(o => Math.hypot(o.x - wx, o.y - wy) < 40);
+  for (let i = 0; i < 900; i++) {
+    const wx = 60 + r() * 1680, wy = 60 + r() * (WORLD_HEIGHT - 120); if (blocked(wx, wy)) continue;
+    const ax = wx / 2 | 0, ay = wy / 2 | 0, z = zoneAt(ax, ay), k = r();
+    if (z === 'desert') { if (k < .5) { R(g, ax, ay + 1, 5, 3, PAL.ol); R(g, ax + 1, ay, 4, 3, '#c0713f'); R(g, ax + 1, ay, 4, 1, '#e8a36a'); } else { for (let n = -1; n <= 1; n++) { R(g, ax + n * 2, ay - 3 + Math.abs(n), 1, 4, '#a08a3a'); R(g, ax + n * 2 + 1, ay - 4, 1, 5, '#d8c25a'); } } continue; }
+    if (z === 'woods') { if (k < .4) { R(g, ax, ay, 3, 2, '#e8e0d0'); R(g, ax - 1, ay - 2, 5, 2, '#7a4ad0'); P(g, ax, ay - 2, '#fff'); } else if (k < .75) { for (let n = -1; n <= 1; n++) R(g, ax + n * 2, ay - 3 + Math.abs(n), 1, 4, '#3f9a50'); } else { R(g, ax, ay, 6, 4, PAL.wood1); R(g, ax, ay, 6, 2, PAL.wood2); R(g, ax + 1, ay + 1, 4, 1, PAL.wood0); } continue; }
     if (z === 'plaza') { if (k < .5) { R(g, ax, ay, 3, 2, PAL.gr1); P(g, ax + 1, ay, PAL.gr3); } else { R(g, ax, ay, 4, 3, PAL.st1); R(g, ax, ay, 4, 1, PAL.st2); } continue; }
     if (k < .4) { for (let n = 0; n < 4; n++) flower(g, ax + (r() * 8 | 0), ay + (r() * 6 | 0), r); }
     else if (k < .7) { for (let n = -1; n <= 1; n++) { R(g, ax + n * 2, ay - 3 + Math.abs(n), 1, 4, PAL.gr0); R(g, ax + n * 2 + 1, ay - 4, 1, 5, PAL.gr3); } }
@@ -181,6 +200,8 @@ function bakeWorld() {
     else if (o.type === 'temple') temple(g, x, y, w, h);
     else if (o.type === 'pillar') ruinPillar(g, x, y, o.x > 1500, r);
     else if (o.type === 'stonewall') brickWall(g, x, y, w, h, r);
+    else if (o.type === 'wtree') tree(g, x + (w >> 1), y + (h >> 1) - 2, 19, r, WOODS_PAL);
+    else if (o.type === 'cliff') cliff(g, x, y, w, h, r);
     else if (o.type === 'tree') tree(g, x + (w >> 1), y + (h >> 1) - 2, 20, r);
     else if (o.type === 'fence') fence(g, x, y + 2, w);
     else if (o.type === 'bush') bush(g, x, y, w, h, r);
@@ -191,8 +212,8 @@ function bakeWorld() {
   obstacles.filter(o => o.type === 'treewall').forEach(o => { for (let ty = o.y / 2; ty < (o.y + o.h) / 2 - 4; ty += 11) tree(g, o.x / 2 + 10 + ((ty / 11 | 0) % 2 ? 2 : -2), ty + 9, 10, r); });
   // bordas: floresta densa em duas fileiras
   for (let i = 0; i < 2; i++) {
-    for (let x = i * 7; x < 900; x += 14) { tree(g, x + 4, 8 + i * 8, 9, r); tree(g, x + 4, 372 - i * 7, 9, r); }
-    for (let y = 10 + i * 6; y < 370; y += 13) { tree(g, 6 + i * 6, y, 9, r); tree(g, 894 - i * 6, y, 9, r); }
+    for (let x = i * 7; x < 900; x += 14) { tree(g, x + 4, 8 + i * 8, 9, r); tree(g, x + 4, 752 - i * 7, 9, r, WOODS_PAL); const gap = (x > 312 && x < 388) || (x > 637 && x < 708); if (!gap) tree(g, x + 4, 372 - i * 7, 9, r); }
+    for (let y = 10 + i * 6; y < 750; y += 13) { tree(g, 6 + i * 6, y, 9, r); tree(g, 894 - i * 6, y, 9, r); }
   }
   return c;
 }

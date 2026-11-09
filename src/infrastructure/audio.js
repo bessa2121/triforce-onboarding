@@ -109,17 +109,41 @@ const AudioEngine = {
     this.ytCur = name; this.yt.loadVideoById({ videoId: this.YT_IDS[name], startSeconds: this.resume[name] || 0 }); this.yt.setVolume(this.muted ? 0 : this.volume * 100);
   },
 
+  /* ---- Crossfade de faixas locais: cada tema tem seu <audio>; um laço de 50ms leva o volume ao alvo ---- */
+  REGION: { 'Kokiri Village': 'kokiri', 'Hyrule Field': 'mido', 'Temple of Time': 'zelda', 'Lost Woods': 'saria', 'Gerudo Valley': 'darunia' },
+  FADE_MS: 1600, pool: {}, goals: {}, fadeLoop: null, filesReady: false, probe: null,
   probeFiles() {
-    if (typeof fetch !== 'function') return;
-    Object.keys(this.THEMES).forEach(n => fetch('assets/audio/' + n + '.mp3', { method: 'HEAD' }).then(r => { this.files[n] = r.ok && /audio|octet/.test(r.headers.get('content-type') || 'audio'); }).catch(() => {}));
+    if (typeof fetch !== 'function') { this.filesReady = true; return; }
+    this.probe = Promise.allSettled(Object.keys(this.THEMES).map(n => fetch('assets/audio/' + n + '.mp3', { method: 'HEAD' })
+      .then(r => { this.files[n] = r.ok && /audio|octet/.test(r.headers.get('content-type') || 'audio'); }).catch(() => {}))).then(() => { this.filesReady = true; });
+  },
+  track(n) { let t = this.pool[n]; if (!t) { t = new Audio('assets/audio/' + n + '.mp3'); t.loop = true; t.preload = 'auto'; t.volume = 0; this.pool[n] = t; } return t; },
+  fadeTo(name) {
+    for (const k in this.pool) this.goals[k] = 0;
+    if (name) { this.goals[name] = 1; this.track(name); }
+    if (this.fadeLoop) return;
+    this.fadeLoop = setInterval(() => {
+      const stop = !gameState.started || isPaused, vol = (typeof this.volume === 'number') ? this.volume : 0.5;
+      for (const k in this.pool) {
+        const t = this.pool[k], g = this.goals[k] || 0;
+        if (stop) { if (!t.paused) t.pause(); continue; }
+        if (g > 0 && t.paused) t.play().catch(() => {});
+        const target = this.muted ? 0 : g * vol, step = vol * 50 / this.FADE_MS;
+        t.volume = Math.max(0, Math.min(1, t.volume < target ? Math.min(target, t.volume + step) : Math.max(target, t.volume - step)));
+        if (g === 0 && t.volume === 0 && !t.paused) t.pause();
+      }
+    }, 50);
   },
   setTheme(name) {
     if (this.theme === name) return;
+    if (!this.filesReady) { this.theme = null; this.wanted = name; if (this.probe && !this._wait) { this._wait = true; this.probe.then(() => { this._wait = false; this.theme = null; this.setTheme(this.wanted); }); } return; }
     this.theme = name; this.step = 0;
     if (this.el) { this.el.pause(); this.el = null; }
     if (this.themeTimer) clearInterval(this.themeTimer);
     if (this.ytReady && this.ytCur) { if (this.ytCur === 'kokiri') this.resume.kokiri = this.yt.getCurrentTime(); this.yt.pauseVideo(); }
     this.ytCur = null;
+    if (this.files[name]) { this.fadeTo(name); return; }
+    this.fadeTo(null);
     if (!this.THEMES[name]) return;
     if (this.YT_IDS[name] && !this.ytBad[name] && !this.files[name]) {
       this.ytPlay(name);
@@ -148,7 +172,7 @@ const AudioEngine = {
     }, t.step);
   },
   /* Tema de fundo: sempre a floresta de Kokiri; personagens trocam durante a conversa */
-  startBGM() { this.base = 'kokiri'; this.setTheme(this.override || this.base); },
+  startBGM(area) { this.base = this.REGION[area] || 'kokiri'; this.setTheme(this.override || this.base); },
   npcTheme(key) { this.override = this.THEMES[key] && key !== 'link' ? key : null; this.setTheme(this.override || this.base); }
 };
 

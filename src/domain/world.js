@@ -1,9 +1,13 @@
 const WORLD_WIDTH = 1800;
-const WORLD_HEIGHT = 760;
+const WORLD_HEIGHT = 1520;   // faixa norte (Kokiri/Hyrule/Templo) + faixa sul (Lost Woods / Gerudo Valley)
 
 const obstacles = [
   { x: 0, y: 0, w: WORLD_WIDTH, h: 40, type: 'border' },
   { x: 0, y: WORLD_HEIGHT - 40, w: WORLD_WIDTH, h: 40, type: 'border' },
+  // muro entre norte e sul, com duas passagens: x 640-760 (Hyrule -> Lost Woods) e x 1290-1400 (Templo -> Gerudo)
+  { x: 0, y: 720, w: 640, h: 40, type: 'border' },
+  { x: 760, y: 720, w: 530, h: 40, type: 'border' },
+  { x: 1400, y: 720, w: 400, h: 40, type: 'border' },
   { x: 0, y: 0, w: 40, h: WORLD_HEIGHT, type: 'border' },
   { x: WORLD_WIDTH - 40, y: 0, w: 40, h: WORLD_HEIGHT, type: 'border' },
 
@@ -30,6 +34,21 @@ const obstacles = [
   { x: 1100, y: 100, w: 36, h: 30, type: 'bush' },
   { x: 40, y: 400, w: 34, h: 28, type: 'bush' }
 ];
+
+(function expandSouth() {
+  const seg = (px, py, a, b) => { const dx = b[0] - a[0], dy = b[1] - a[1], t = Math.max(0, Math.min(1, ((px - a[0]) * dx + (py - a[1]) * dy) / (dx * dx + dy * dy))); return Math.hypot(px - a[0] - t * dx, py - a[1] - t * dy); };
+  const near = (px, py, path) => path.some((p, i) => i && seg(px, py, path[i - 1], p) < 95);
+  let sd = 7; const rnd = () => (sd = (sd * 16807) % 2147483647) / 2147483647;
+  const woodsPath = [[700, 740], [700, 900], [320, 1010], [320, 1170], [620, 1260], [780, 1360], [780, 1450]];
+  const desertPath = [[1340, 740], [1340, 900], [1100, 1010], [1500, 1150], [1300, 1290], [1100, 1400]];
+  obstacles.push({ x: 880, y: 760, w: 40, h: 420, type: 'cliff' });
+  for (let gy = 770; gy < 1440; gy += 88) for (let gx = 50; gx < 1690; gx += 88) {
+    const cx = gx + 40, cy = gy + 40; if (cx > 850 && cx < 950 && cy < 1200) continue;
+    const woods = cx < 900;
+    if (near(cx, cy, woods ? woodsPath : desertPath) || rnd() > (woods ? 0.72 : 0.5)) continue;
+    obstacles.push(woods ? { x: gx, y: gy, w: 80, h: 80, type: 'wtree' } : { x: gx, y: gy, w: 80, h: 64, type: 'cliff' });
+  }
+})();
 
 const npcs = [
   { id: 'saria', name: 'Saria', role: 'RH / People', x: 400, y: 220, color: '#2ecc71', hair: '#27ae60' },

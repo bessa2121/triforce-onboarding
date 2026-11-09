@@ -14,7 +14,7 @@ window.addEventListener('resize', resizeCanvas);
 
 function initRenderer() {
   resizeCanvas(); buildSheets(); buildEntitySprites(); worldLayer = bakeWorld();
-  const r = rng(99); for (let i = 0; i < 46; i++) motes.push({ x: r() * WORLD_WIDTH, y: r() * WORLD_HEIGHT, ph: r() * 6.28, s: .2 + r() * .4 });
+  const r = rng(99); for (let i = 0; i < 90; i++) motes.push({ x: r() * WORLD_WIDTH, y: r() * WORLD_HEIGHT, ph: r() * 6.28, s: .2 + r() * .4 });
 }
 function snap(v) { return Math.round(v / 2) * 2; }
 
@@ -53,7 +53,7 @@ function renderFrame(tick) {
   const camX = snap(cam(p.x, vw, WORLD_WIDTH)), camY = snap(cam(p.y, vh, WORLD_HEIGHT));
   ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.fillStyle = '#0b130b'; ctx.fillRect(0, 0, canvas.width, canvas.height);
   ctx.setTransform(VS, 0, 0, VS, -camX * VS, -camY * VS); ctx.imageSmoothingEnabled = false;
-  ctx.drawImage(worldLayer, 0, 0, 900, 380, 0, 0, WORLD_WIDTH, WORLD_HEIGHT);
+  ctx.drawImage(worldLayer, 0, 0, worldLayer.width, worldLayer.height, 0, 0, WORLD_WIDTH, WORLD_HEIGHT);
   // água viva
   const L = LAKE; for (let i = 0; i < 10; i++) { const k = (tick * .4 + i * 37) % 120; if (k < 60) { ctx.fillStyle = k < 30 ? PAL.wat3 : PAL.wat2; ctx.fillRect(snap((L.x + 8 + (i * 29) % (L.w - 16)) * 2), snap((L.y + 8 + (i * 17) % (L.h - 16)) * 2), 6, 2); } }
   // luz do templo e tochas
@@ -81,12 +81,14 @@ function renderFrame(tick) {
   const walkSeq = [0, 1, 0, 3];
   ents.push({ y: p.y, draw() { drawActor(ctx, 'link', p.x, p.y, p.dir || 'down', moving ? walkSeq[Math.floor(tick / 6) % 4] : ((tick % 200 < 8) ? 4 : 0), 0); drawNavi(p.x, p.y, tick); } });
   ents.sort((a, b) => a.y - b.y).forEach(e => e.draw());
+  ctx.fillStyle = 'rgba(8,24,20,0.2)'; ctx.fillRect(0, 760, 900, 720);        // Lost Woods: penumbra
+  ctx.fillStyle = 'rgba(255,170,60,0.07)'; ctx.fillRect(900, 760, 900, 720);    // Gerudo: luz quente
   // partículas e partículas ambientais
   ctx.textAlign = 'left';
   for (let i = particles.length - 1; i >= 0; i--) { const q = particles[i]; q.x += q.vx; q.y += q.vy; q.life--; ctx.fillStyle = q.color; ctx.fillRect(snap(q.x), snap(q.y), 4, 4); if (q.life <= 0) particles.splice(i, 1); }
   motes.forEach(m => {
     m.x += Math.sin(tick * .02 + m.ph) * .4 + .15; m.y += m.s * .35 + Math.cos(tick * .03 + m.ph) * .2; if (m.y > WORLD_HEIGHT) m.y = 0; if (m.x > WORLD_WIDTH) m.x = 0;
-    const zone = m.x < 600 ? 'v' : m.x < 1250 ? 'f' : 'p'; ctx.fillStyle = zone === 'v' ? (m.ph > 3 ? '#7ccb4d' : '#e8a53a') : zone === 'f' ? '#fff6c0' : '#bfe9ff';
+    const zone = m.y > 760 ? (m.x < 900 ? 'w' : 'd') : m.x < 600 ? 'v' : m.x < 1250 ? 'f' : 'p'; ctx.fillStyle = zone === 'w' ? '#d6ff7a' : zone === 'd' ? '#f2d9a0' : zone === 'v' ? (m.ph > 3 ? '#7ccb4d' : '#e8a53a') : zone === 'f' ? '#fff6c0' : '#bfe9ff';
     ctx.fillRect(snap(m.x), snap(m.y), 2, 2);
   });
   ctx.setTransform(1, 0, 0, 1, 0, 0);

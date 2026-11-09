@@ -23,3 +23,9 @@ Usa scripts clássicos (globais) porque o HTML tem `onclick`. Próximo passo: ES
 
 ## Trocar músicas
 Substitua os MP3 em `assets/audio/` mantendo os nomes (ver `LEIAME.txt`).
+
+## Mapa e música por região
+O mundo tem 1800x1520: faixa norte (Kokiri Village, Hyrule Field, Temple of Time) e faixa sul (Lost Woods e Gerudo Valley), ligadas por duas passagens no muro central (x 640-760 e x 1290-1400).
+Ao mudar de região, a trilha muda com crossfade de ~1,6 s (`AudioEngine.REGION` em `src/infrastructure/audio.js`):
+Kokiri Village → kokiri · Hyrule Field → mido (Epona) · Temple of Time → zelda · Lost Woods → saria · Gerudo Valley → darunia.
+Falar com um NPC sobrepõe a trilha da região pela do personagem; ao fechar o diálogo volta a da região.
