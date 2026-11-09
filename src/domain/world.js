@@ -12,12 +12,12 @@ const obstacles = [
   { x: WORLD_WIDTH - 40, y: 0, w: 40, h: WORLD_HEIGHT, type: 'border' },
 
   { x: 100, y: 90, w: 120, h: 90, type: 'house', label: 'Casa de Link' },
-  { x: 340, y: 90, w: 130, h: 90, type: 'house', label: 'Casa de Saria (RH)' },
+  { x: 340, y: 90, w: 130, h: 90, type: 'house', label: 'Casa Kokiri' },
   { x: 120, y: 520, w: 120, h: 80, type: 'house', label: 'Oficina TI' },
   { x: 560, y: 40, w: 40, h: 240, type: 'treewall' },
   { x: 560, y: 440, w: 40, h: 280, type: 'treewall' },
 
-  { x: 760, y: 120, w: 140, h: 90, type: 'rock', label: 'Posto de Gestão' },
+  { x: 760, y: 120, w: 140, h: 90, type: 'rock', label: 'Mesa da Equipe' },
   { x: 960, y: 470, w: 90, h: 90, type: 'tree' },
   { x: 1210, y: 40, w: 40, h: 250, type: 'stonewall' },
   { x: 1210, y: 450, w: 40, h: 270, type: 'stonewall' },
@@ -51,11 +51,11 @@ const obstacles = [
 })();
 
 const npcs = [
-  { id: 'saria', name: 'Saria', role: 'RH / People', x: 400, y: 220, color: '#2ecc71', hair: '#27ae60' },
-  { id: 'darunia', name: 'Darunia', role: 'Gestor / Liderança', x: 830, y: 250, color: '#d35400', hair: '#e67e22' },
+  { id: 'saria', name: 'Saria', role: 'RH / People', x: 320, y: 1090, color: '#2ecc71', hair: '#27ae60' },
+  { id: 'darunia', name: 'Darunia', role: 'Gestor / Liderança', x: 1220, y: 955, color: '#d35400', hair: '#e67e22' },
   { id: 'talon', name: 'Talon', role: 'TI / Suporte Técnico', x: 260, y: 560, color: '#2b4c7e', hair: '#5c3a21' },
-  { id: 'impa', name: 'Impa', role: 'Segurança e Políticas', x: 1080, y: 220, color: '#5b2c6f', hair: '#ecf0f1' },
-  { id: 'mido', name: 'Mido', role: 'Colega de Equipe', x: 460, y: 400, color: '#82e0aa', hair: '#d4ac0d' },
+  { id: 'impa', name: 'Impa', role: 'Segurança e Políticas', x: 1400, y: 270, color: '#5b2c6f', hair: '#ecf0f1' },
+  { id: 'mido', name: 'Mido', role: 'Colega de Equipe', x: 830, y: 250, color: '#82e0aa', hair: '#d4ac0d' },
   { id: 'zelda', name: 'Princesa Zelda', role: 'Liderança de Hyrule', x: 1550, y: 240, color: '#f4c430', hair: '#f7dc6f' }
 ];
 

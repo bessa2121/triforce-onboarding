@@ -1,7 +1,7 @@
 // ============================================================================
 // 1. ESTADO DO JOGO E PERSISTÊNCIA (localStorage)
 // ============================================================================
-const STORAGE_KEY = 'link_onboarding_save_v1';
+const STORAGE_KEY = 'link_onboarding_save_v2';
 
 const DEFAULT_STATE = {
   started: false,

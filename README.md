@@ -29,3 +29,15 @@ O mundo tem 1800x1520: faixa norte (Kokiri Village, Hyrule Field, Temple of Time
 Ao mudar de região, a trilha muda com crossfade de ~1,6 s (`AudioEngine.REGION` em `src/infrastructure/audio.js`):
 Kokiri Village → kokiri · Hyrule Field → mido (Epona) · Temple of Time → zelda · Lost Woods → saria · Gerudo Valley → darunia.
 Falar com um NPC sobrepõe a trilha da região pela do personagem; ao fechar o diálogo volta a da região.
+
+## Regiões, personagens e missões (v3)
+Percurso: Kokiri Village > Hyrule Field > Lost Woods > Gerudo Valley > Temple of Time.
+| Região | Personagem | Missão (tema) |
+|---|---|---|
+| Kokiri Village | Talon (TI) | 1. Acessos, MFA, TI-sombra, cards e compartilhamento seguro |
+| Hyrule Field | Mido (Colega) | 2. Regras não ditas da equipe (Baú de Ferramentas também abre) |
+| Lost Woods | Saria (RH) | 3. Políticas: férias, presentes, LGPD, conduta, horas extras |
+| Gerudo Valley | Darunia (Gestor) | 4. Feedback, prioridades e impacto |
+| Temple of Time | Impa (Segurança) e Zelda | 5. Ataques além do phishing; 6. Desafio Final |
+
+As perguntas ficam em `QUIZ` (`src/application/missions.js`) no formato `[cenário, correta, errada1, errada2, errada3, explicação]`; as alternativas são embaralhadas a cada exibição. Save migrado para `link_onboarding_save_v2`. A pasta `link/` é uma cópia antiga e não foi alterada.

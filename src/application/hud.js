@@ -26,15 +26,13 @@ function showToast(msg) {
 
 const MISSION_OBJECTIVES = {
   0: { badge: 'COMEÇO • TUTORIAL', title: 'Leia a Placa de Kokiri (E)' },
-  1: { badge: 'MISSÃO 1/8 • EQUIPE', title: 'Fale com Saria, Darunia e Talon' },
-  2: { badge: 'MISSÃO 2/8 • CULTURA', title: 'Converse com Mido ou Saria' },
-  3: { badge: 'MISSÃO 3/8 • FERRAMENTAS', title: 'Abra o Baú de Ferramentas ou fale com Talon' },
-  4: { badge: 'MISSÃO 4/8 • SEGURANÇA', title: 'Fale com Impa em Hyrule Field' },
-  5: { badge: 'MISSÃO 5/8 • COLABORAÇÃO', title: 'Reúna pistas com Mido, Talon e Saria' },
-  6: { badge: 'MISSÃO 6/8 • ORGANIZAÇÃO', title: 'Fale com Saria sobre o Diário' },
-  7: { badge: 'MISSÃO 7/8 • IMPACTO', title: 'Fale com Darunia em Hyrule Field' },
-  8: { badge: 'MISSÃO FINAL • 8/8', title: 'Fale com a Princesa Zelda no Templo' },
-  9: { badge: 'CONCLUÍDO', title: 'Jornada de Onboarding Finalizada!' }
+  1: { badge: 'MISSÃO 1/6 • KOKIRI VILLAGE', title: 'Fale com Talon (TI) na Oficina' },
+  2: { badge: 'MISSÃO 2/6 • HYRULE FIELD', title: 'Fale com Mido ou abra o Baú de Ferramentas' },
+  3: { badge: 'MISSÃO 3/6 • LOST WOODS', title: 'Passagem ao sul do campo: fale com Saria' },
+  4: { badge: 'MISSÃO 4/6 • GERUDO VALLEY', title: 'Atravesse a floresta e fale com Darunia' },
+  5: { badge: 'MISSÃO 5/6 • TEMPLE OF TIME', title: 'Suba a passagem ao norte: fale com Impa' },
+  6: { badge: 'MISSÃO FINAL • 6/6', title: 'Fale com a Princesa Zelda no Templo' },
+  7: { badge: 'CONCLUÍDO', title: 'Jornada de Onboarding Finalizada!' }
 };
 
 function getLevelInfo(xp) {
@@ -70,7 +68,7 @@ function updateHUD() {
   const lvlEl = document.getElementById('hud-level');
   if (lvlEl) lvlEl.textContent = `Nv. ${lvlInfo.lvl} • ${lvlInfo.title}`;
 
-  const objInfo = MISSION_OBJECTIVES[gameState.currentMission] || MISSION_OBJECTIVES[9];
+  const objInfo = MISSION_OBJECTIVES[gameState.currentMission] || MISSION_OBJECTIVES[7];
   const badgeEl = document.getElementById('hud-mission-badge');
   const titleEl = document.getElementById('hud-mission-title');
   if (badgeEl) badgeEl.textContent = objInfo.badge;
@@ -96,21 +94,23 @@ function updateHUD() {
   }
 }
 
+const CHECKPOINT = { 'Kokiri Village': [180, 360], 'Hyrule Field': [700, 400], 'Lost Woods': [700, 800], 'Gerudo Valley': [1340, 800], 'Temple of Time': [1400, 400] };
 function loseHeart(reason) {
   AudioEngine.playError();
   gameState.hearts--;
   gameState.totalAttempts++;
-  updateHUD();
   if (gameState.hearts <= 0) {
     gameState.hearts = gameState.maxHearts;
-    gameState.player.x = 180;
-    gameState.player.y = 360;
-    updateHUD();
-    showToast('Você perdeu todos os corações! Navi te trouxe de volta ao início.');
-  } else {
-    showToast(reason || 'Resposta incorreta! Você perdeu 1 coração.');
+    const c = CHECKPOINT[lastAreaName] || CHECKPOINT['Kokiri Village'];
+    gameState.player.x = c[0]; gameState.player.y = c[1];
+    updateHUD(); saveGame();
+    showToast('Você perdeu todos os corações! Navi te levou ao posto da região. Revise o Diário (J) e tente de novo.');
+    return true;
   }
+  updateHUD();
+  showToast(reason || 'Resposta incorreta! Você perdeu 1 coração.');
   saveGame();
+  return false;
 }
 
 function addXP(amount, isCorrect = true) {
@@ -126,51 +126,32 @@ function addXP(amount, isCorrect = true) {
 }
 
 const MISSION_LEARNINGS = {
-  1: { title: 'Missão 1: Conheça a Equipe', reward: '+120 XP • Rede de Apoio', lesson: 'No trabalho, saber a quem recorrer (RH, Gestor, TI) evita bloqueios e agiliza suas entregas.' },
-  2: { title: 'Missão 2: Cultura da Empresa', reward: '+80 XP', lesson: 'Pedir ajuda cedo com contexto mostra maturidade e fortalece a colaboração do time.' },
-  3: { title: 'Missão 3: Ferramentas de Trabalho', reward: '+105 XP • Mestre das Ferramentas', lesson: 'Manter tarefas registradas, atualizadas e compartilhadas corretamente evita retrabalho.' },
-  4: { title: 'Missão 4: Segurança da Informação', reward: '+100 XP', lesson: 'Sempre verifique o remetente, nunca compartilhe senhas e reporte e-mails suspeitos à Segurança/TI.' },
-  5: { title: 'Missão 5: Comunicação e Colaboração', reward: '+105 XP • Fragmento da Coragem', lesson: 'Compartilhar informações e alinhar com colegas transforma esforços individuais em resultados.' },
-  6: { title: 'Missão 6: Organização', reward: '+90 XP • Fragmento da Sabedoria', lesson: 'Consultar o guia de integração e organizar prioridades reduz a sobrecarga da primeira semana.' },
-  7: { title: 'Missão 7: Entenda seu Impacto', reward: '+100 XP • Fragmento do Poder', lesson: 'Toda tarefa contribui para o objetivo coletivo. Alinhar prazos e pedir feedback acelera seu crescimento.' }
+  1: { title: 'Missão 1: Acessos e Ferramentas', reward: '+140 XP • Mestre dos Acessos', lesson: 'Credencial é pessoal, MFA não solicitado é alerta e ferramenta fora da lista oficial é risco.' },
+  2: { title: 'Missão 2: Regras Não Ditas', reward: '+140 XP • Fragmento da Coragem', lesson: 'Avise cedo, pergunte com contexto, discorde com proposta e dê crédito.' },
+  3: { title: 'Missão 3: Políticas da Empresa', reward: '+140 XP • Fragmento da Sabedoria', lesson: 'Direito e política andam juntos: alinhe, registre e use os canais oficiais.' },
+  4: { title: 'Missão 4: Feedback e Prioridades', reward: '+140 XP • Fragmento do Poder', lesson: 'Peça feedback específico, transforme-o em combinado e exponha conflitos de prioridade.' },
+  5: { title: 'Missão 5: Defesa contra Ataques', reward: '+140 XP', lesson: 'Pare, verifique por outro canal e reporte: vale para ligação, porta, pendrive, e-mail e Wi-Fi.' }
 };
 
 function completeMission(num) {
-  if (!gameState.completedMissions.includes(num)) {
-    gameState.completedMissions.push(num);
-  }
-  if (gameState.currentMission === num) {
-    gameState.currentMission = num + 1;
-  }
-
-  if (num === 1) unlockAchievement('m1', 'Rede de Apoio');
-  if (num === 3) unlockAchievement('m3', 'Mestre das Ferramentas');
-  if (num === 5) unlockAchievement('m5', 'Espírito de Equipe');
-
-  if (num === 1 && !gameState.diaryUnlocked.includes('equipe')) gameState.diaryUnlocked.push('equipe');
-  if (num === 3 && !gameState.diaryUnlocked.includes('ferramentas')) gameState.diaryUnlocked.push('ferramentas');
-  if (num === 4 && !gameState.diaryUnlocked.includes('politicas')) gameState.diaryUnlocked.push('politicas');
-  if (num === 6 && !gameState.diaryUnlocked.includes('pratica')) gameState.diaryUnlocked.push('pratica');
-
+  if (!gameState.completedMissions.includes(num)) gameState.completedMissions.push(num);
+  if (gameState.currentMission === num) gameState.currentMission = num + 1;
+  const ach = { 1: ['m1', 'Mestre dos Acessos'], 2: ['m2', 'Espírito de Equipe'], 3: ['m3', 'Guardião das Políticas'], 4: ['m4', 'Mente Aberta ao Feedback'], 5: ['m5', 'Sentinela de Hyrule'] }[num];
+  if (ach) unlockAchievement(ach[0], ach[1]);
+  const sec = { 1: 'ferramentas', 2: 'equipe', 3: 'politicas', 4: 'feedback', 5: 'seguranca' }[num];
+  if (sec && !gameState.diaryUnlocked.includes(sec)) gameState.diaryUnlocked.push(sec);
   const info = MISSION_LEARNINGS[num];
-  if (info) {
-    showToast(`✓ ${info.title} (${info.reward}) — ${info.lesson}`);
+  if (info) showToast(`Missão concluída: ${info.title} (${info.reward}) — ${info.lesson}`);
+  const tri = {
+    2: ['courage', 'CORAGEM (Equipe & Operação)', 'Você dominou acessos, ferramentas e as regras não ditas da equipe!'],
+    3: ['wisdom', 'SABEDORIA (RH & Cultura)', 'Você atravessou o labirinto das políticas da empresa!'],
+    4: ['power', 'PODER (Gestão & Liderança)', 'Você entendeu feedback, prioridades e o impacto do seu trabalho!']
+  }[num];
+  if (tri && !gameState.triforce[tri[0]]) {
+    gameState.triforce[tri[0]] = true;
+    AudioEngine.playTriforce();
+    showTriforceUnlock(tri[1], tri[2]);
   }
-
-  if (num === 5 && !gameState.triforce.courage) {
-    gameState.triforce.courage = true;
-    AudioEngine.playTriforce();
-    showTriforceUnlock('CORAGEM (Equipe & Operação)', 'Você dominou ferramentas, execução e colaboração com a equipe!');
-  } else if (num === 6 && !gameState.triforce.wisdom) {
-    gameState.triforce.wisdom = true;
-    AudioEngine.playTriforce();
-    showTriforceUnlock('SABEDORIA (RH & Cultura)', 'Você compreendeu a cultura, políticas de segurança e organização!');
-  } else if (num === 7 && !gameState.triforce.power) {
-    gameState.triforce.power = true;
-    AudioEngine.playTriforce();
-    showTriforceUnlock('PODER (Gestão & Liderança)', 'Você entendeu prioridades, feedback e o impacto real do seu trabalho!');
-  }
-
   updateHUD();
   saveGame();
 }
