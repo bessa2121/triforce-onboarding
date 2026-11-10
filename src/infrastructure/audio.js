@@ -5,7 +5,7 @@
 const AudioEngine = {
   ctx: null,
   muted: false,
-  volume: 0.35,
+  volume: (() => { try { const v = parseFloat(localStorage.getItem('triforce_volume')); return isNaN(v) ? 0.12 : Math.max(0, Math.min(1, v)); } catch (e) { return 0.12; } })(),
   bgmInterval: null,
   currentRegion: null,
   stepCooldown: 0,
@@ -15,6 +15,7 @@ const AudioEngine = {
       const AC = window.AudioContext || window.webkitAudioContext;
       if (AC) this.ctx = new AC();
     }
+    const sl = document.getElementById('vol-slider'); if (sl) sl.value = this.volume;
     if (!this._probed) { this._probed = true; this.probeFiles(); }
     if (this.ctx && this.ctx.state === 'suspended') {
       this.ctx.resume();
@@ -22,7 +23,9 @@ const AudioEngine = {
   },
 
   setVolume(val) {
-    this.volume = parseFloat(val);
+    this.volume = Math.max(0, Math.min(1, parseFloat(val)));
+    try { localStorage.setItem('triforce_volume', this.volume); } catch (e) {}
+    const sl = document.getElementById('vol-slider'); if (sl) sl.value = this.volume;
   },
 
   toggleMute() {
@@ -176,3 +179,10 @@ const AudioEngine = {
   npcTheme(key) { this.override = this.THEMES[key] && key !== 'link' ? key : null; this.setTheme(this.override || this.base); }
 };
 
+
+// Atalhos de volume: + e - (passos de 5%). O jogo começa baixo (12%) e a escolha fica salva.
+window.addEventListener('keydown', (e) => {
+  if (e.key !== '+' && e.key !== '=' && e.key !== '-') return;
+  AudioEngine.setVolume(AudioEngine.volume + (e.key === '-' ? -0.05 : 0.05));
+  if (typeof showToast === 'function') showToast('Volume: ' + Math.round(AudioEngine.volume * 100) + '%');
+});
