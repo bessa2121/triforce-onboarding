@@ -2,6 +2,7 @@
 // 8. DIÁRIO DE JORNADA
 // ============================================================================
 const DIARY_SECTIONS = [
+  { id: 'autonomia', title: '0. Ajuda e Liderança', text: `<strong>Kaepora Gaebora (Kokiri Village):</strong> a coruja guarda respostas práticas por tema ou palavra-chave e diz quem procurar no mapa.<br><strong>Sábios de setor:</strong> Talon (TI), Mido (equipe), Saria (RH), Darunia (gestão) e Impa (segurança).<br><strong>Pedestal Central (Temple of Time):</strong> abaixo da Princesa Zelda. Desperta depois que você conversa com 2 sábios ou consulta a coruja, e permite agendar um 1:1 ou mentoria reais com a liderança.<br><strong>Regra de ouro:</strong> tente o básico, depois acione a liderança com a dúvida em uma frase.` },
   { id: 'primeiro_contato', title: '1. Primeiro Contato', text: `<strong>Controles:</strong> WASD/Setas movem, E/Espaço interagem, 1 a 4 respondem perguntas.<br><strong>Rota:</strong> Kokiri Village (TI) > Hyrule Field (Equipe) > Lost Woods (RH) > Gerudo Valley (Gestão) > Temple of Time (Segurança e Desafio Final).<br><strong>Regras do jogo:</strong> cada erro custa 1 coração e a pergunta volta mais tarde. Zerar os corações leva você ao posto da região. Cada missão concluída devolve 1 coração.` },
   { id: 'ferramentas', title: '2. Acessos e Ferramentas', text: `<strong>Credenciais:</strong> são pessoais e intransferíveis. Precisa de acesso? Abra chamado e avise o gestor do prazo.<br><strong>MFA:</strong> aprovação que você não pediu significa senha comprometida. Negue, troque a senha e reporte.<br><strong>TI-sombra:</strong> app fora da lista oficial leva dados para onde não há contrato nem auditoria. Proponha à TI.<br><strong>Cards:</strong> título claro, responsável, prazo, dependências e status atualizado com comentário.<br><strong>Documentos:</strong> link com menor privilégio (leitura ou edição só para quem precisa) e expiração. Evite anexos e links abertos.` },
   { id: 'equipe', title: '3. Regras Não Ditas', text: `<strong>Pedir ajuda:</strong> mensagem completa (objetivo, o que tentou, erro, prazo). Não espere horas nem pergunte vago no canal geral.<br><strong>Fora do horário:</strong> confirme o recebimento e o prazo; execute no expediente. Silêncio gera ansiedade, heroísmo vira expectativa.<br><strong>Discordar:</strong> com dado e alternativa, na hora certa, e peça que a decisão seja registrada.<br><strong>Crédito:</strong> cite quem contribuiu e avise antes.<br><strong>Atrasos:</strong> avise cedo, com nova data e plano de recuperação.` },
@@ -18,9 +19,9 @@ function openDiary() {
   content.innerHTML = '';
 
   DIARY_SECTIONS.forEach((sec, idx) => {
-    const unlocked = gameState.diaryUnlocked.includes(sec.id);
+    const unlocked = sec.id === 'autonomia' || gameState.diaryUnlocked.includes(sec.id);
     const btn = document.createElement('button');
-    btn.className = 'tab-btn' + (idx === 0 ? ' active' : '');
+    btn.className = 'tab-btn' + (idx === 1 ? ' active' : '');
     btn.textContent = unlocked ? sec.title : '🔒 Bloqueado';
     btn.onclick = () => {
       document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
@@ -31,7 +32,7 @@ function openDiary() {
     };
     tabs.appendChild(btn);
   });
-  tabs.firstChild.click();
+  tabs.children[1].click();
   document.getElementById('diary-modal').classList.add('active');
 }
 
@@ -47,6 +48,10 @@ function openInventory() {
     <div class="diary-entry">
       <strong>Itens Colecionáveis (${items.length}/2):</strong><br>
       ${items.length ? items.map(i => `• 🎒 ${i}`).join('<br>') : 'Nenhum item encontrado ainda. Explore os baús secretos!'}
+    </div>
+    <div class="diary-entry">
+      <strong>Autonomia:</strong> ${autonomyState().consults} consulta(s) à Kaepora Gaebora • ${sectorsMet()} sábio(s) de setor consultado(s)<br>
+      <strong>Pedestal Central:</strong> ${agendaUnlocked() ? (schedState().requests.length ? schedState().requests.length + ' audiência(s) registrada(s)' : 'liberado: peça sua audiência') : 'bloqueado: consulte os sábios e a coruja'}
     </div>
     <div class="diary-entry">
       <strong>Conquistas Desbloqueadas (${achs.length}):</strong><br>

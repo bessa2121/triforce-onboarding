@@ -71,6 +71,14 @@ const AudioEngine = {
     this.playTone(220, 0.14, 'sawtooth', 0.22);
     setTimeout(() => this.playTone(165, 0.22, 'sawtooth', 0.22), 120);
   },
+  playOwl() {
+    this.playTone(330, 0.14, 'sine', 0.3);
+    setTimeout(() => this.playTone(262, 0.24, 'sine', 0.3), 170);
+  },
+  playAgenda() {   // fanfarra de "item obtido" ao selar o agendamento
+    [392, 523, 659, 784, 659, 784, 1046].forEach((f, i) => setTimeout(() => this.playTone(f, i > 5 ? 0.5 : 0.16, 'triangle', 0.32), i * 120));
+    setTimeout(() => this.playTone(1318, 0.6, 'sine', 0.2), 900);
+  },
   playTriforce() {
     [523, 659, 784, 1046].forEach((f, i) => {
       setTimeout(() => this.playTone(f, 0.22, 'triangle', 0.3), i * 130);

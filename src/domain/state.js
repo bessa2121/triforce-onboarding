@@ -21,7 +21,13 @@ const DEFAULT_STATE = {
   diaryUnlocked: ['primeiro_contato'],
   collectibles: [],
   achievements: [],
-  victory: false
+  victory: false,
+  // --- Kaepora Gaebora: métrica silenciosa de autonomia (alimenta o relatório final) ---
+  autonomy: { visits: 0, consults: 0, entries: [], categories: [], searches: 0, misses: [], routes: [], first: null, last: null },
+  met: [],            // NPCs de setor com quem o jogador já conversou
+  guideTarget: null,  // NPC que a Kaepora marcou no mapa
+  // --- Pedestal Central: agenda real com a liderança ---
+  sched: { requests: [], autoLocked: false, autoUnlocked: false, draft: { name: '', email: '' } }
 };
 
 let gameState = JSON.parse(JSON.stringify(DEFAULT_STATE));

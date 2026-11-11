@@ -1,7 +1,7 @@
 /* Retratos de diálogo 32x32 px de arte (exibidos a 64x64). Mesma ficha dos sprites do mundo. */
 function portraitKey(sp) {
   const s = (sp || '').toUpperCase();
-  for (const k of ['SARIA', 'DARUNIA', 'TALON', 'IMPA', 'MIDO', 'ZELDA']) if (s.includes(k)) return k.toLowerCase();
+  for (const k of ['KAEPORA', 'SARIA', 'DARUNIA', 'TALON', 'IMPA', 'MIDO', 'ZELDA']) if (s.includes(k)) return k.toLowerCase();
   return s.includes('NAVI') ? 'navi' : 'link';
 }
 function portraitArt(g, s) {
@@ -37,10 +37,10 @@ function drawNaviPortrait(g) {
   disc(g, 16, 16, 11, '#1d4a7a'); disc(g, 16, 16, 9, '#3d86c0'); disc(g, 16, 16, 6, '#8ecae6'); disc(g, 16, 16, 3, '#ffffff');
   R(g, 3, 9, 7, 13, '#d8f0ff'); R(g, 22, 9, 7, 13, '#d8f0ff'); R(g, 4, 10, 5, 3, '#ffffff'); R(g, 23, 10, 5, 3, '#ffffff');
 }
-function drawPortrait(speaker) {
-  const pc = document.getElementById('dialog-portrait'); if (!pc) return;
+function drawPortrait(speaker, canvasId = 'dialog-portrait') {
+  const pc = document.getElementById(canvasId); if (!pc) return;
   const [t, g] = mk(34, 34); g.translate(1, 1);
-  const k = portraitKey(speaker); if (k === 'navi') drawNaviPortrait(g); else portraitArt(g, CHARS[k]);
+  const k = portraitKey(speaker); if (k === 'navi') drawNaviPortrait(g); else if (k === 'kaepora') drawOwlPortrait(g); else portraitArt(g, CHARS[k]);
   outline(t, PAL.ol);
   const p = pc.getContext('2d'); p.imageSmoothingEnabled = false; p.clearRect(0, 0, 64, 64); p.drawImage(t, 1, 1, 32, 32, 0, 0, 64, 64);
 }

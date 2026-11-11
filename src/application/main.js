@@ -6,10 +6,16 @@ const touchDir = { up: false, down: false, left: false, right: false };
 
 window.addEventListener('keydown', (e) => {
   const k = e.key.toLowerCase();
+  // digitando em campo de texto (busca da Kaepora, formulário do Pedestal): atalhos do jogo ficam de fora
+  if (e.target && e.target.matches && e.target.matches('input, textarea, select')) {
+    if (k === 'escape') { e.target.blur(); closeHelperModals(); }
+    return;
+  }
   keys[k] = true;
 
   if (!gameState.started) return;
   if (k === 'escape') {
+    if (closeHelperModals()) return;
     togglePause();
     return;
   }
@@ -78,6 +84,7 @@ function updatePlayer() {
     if (!checkCollision(nx, gameState.player.y, 14)) gameState.player.x = nx;
     if (!checkCollision(gameState.player.x, ny, 14)) gameState.player.y = ny;
     updateHUD();
+    checkPedestalStep();
   }
 }
 

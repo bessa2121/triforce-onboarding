@@ -11,11 +11,12 @@ Dependências apontam para dentro: `presentation → application → domain`; `i
 ```
 index.html                 composição: ordem de carga dos scripts
 assets/
+  data/                    knowledge-base.json (FAQ da Kaepora Gaebora)
   audio/                   kokiri, saria, mido, talon, zelda, darunia (.mp3)
   styles/                  main.css (layout) · theme.css (tema pixel)
 src/
-  domain/                  dados e estado: state.js (estado + save), world.js (mapa, NPCs, colisões)
-  application/             casos de uso: dialog, missions, diary, hud, session, main (input + loop)
+  domain/                  dados e estado: config.js (agenda), state.js (estado + save), world.js (mapa, NPCs, colisões)
+  application/             casos de uso: dialog, missions, diary, hud, session, kaepora (FAQ), agenda (Pedestal), main (input + loop)
   infrastructure/          audio.js (arquivos locais -> YouTube -> sintetizado)
   presentation/render/     só desenha: pixel, sprites, portraits, icons, world-art, renderer
 ```
@@ -41,3 +42,21 @@ Percurso: Kokiri Village > Hyrule Field > Lost Woods > Gerudo Valley > Temple of
 | Temple of Time | Impa (Segurança) e Zelda | 5. Ataques além do phishing; 6. Desafio Final |
 
 As perguntas ficam em `QUIZ` (`src/application/missions.js`) no formato `[cenário, correta, errada1, errada2, errada3, explicação]`; as alternativas são embaralhadas a cada exibição. Save migrado para `link_onboarding_save_v2`. A pasta `link/` é uma cópia antiga e não foi alterada.
+
+## Kaepora Gaebora: Mentor de Autonomia e Central de Ajuda
+Coruja em Kokiri Village (perto do início). Ao conversar, abre a Central de Ajuda:
+- **Busca e menu**: categorias (Acessos, Benefícios, Processos, Dicas de Equipe, Segurança), palavra-chave livre (ignora acentos e caixa) e o atalho "Qual é o meu próximo passo?" (usa a missão atual).
+- **Triagem**: cada resposta indica o NPC/setor, a região e a direção no mapa a partir de onde o jogador está; "Marcar no mapa" coloca uma seta dourada sobre o destino.
+- **Métrica silenciosa**: `gameState.autonomy` guarda visitas, consultas, tópicos, categorias, buscas, destinos marcados e buscas sem resposta (útil para achar lacunas no FAQ). Nada disso aparece para o jogador durante o jogo.
+- **Conteúdo**: edite `assets/data/knowledge-base.json` (entradas, palavras-chave, NPC de destino, textos da coruja). O conteúdo atual é de treinamento (empresa fictícia); troque pelos dados reais, em especial a seção Benefícios.
+
+## Pedestal Central: agenda real com a liderança
+Em Temple of Time, logo abaixo da Zelda. Pisar nele pela primeira vez ou apertar E abre o pergaminho.
+- **Trava de autonomia**: libera após conversar com 2 NPCs de setor **ou** consultar 1 resposta da Kaepora. Antes disso: "Consulte os sábios e a Kaepora Gaebora antes de solicitar uma audiência real." Os limites ficam em `src/domain/config.js`.
+- **Formulário**: nome, e-mail, tema (Dúvida de Projeto, Feedback, Carreira, Outro), dúvida em uma frase (opcional), data e horário (dias úteis, 09:00 a 18:00, configurável).
+- **Agenda real**: "Abrir no Google Calendar" (evento preenchido, liderança como convidada), "Baixar .ics" e, se `bookingUrl` estiver configurado, botão para Calendly/Cal.com com nome, e-mail e tema na URL.
+- **Confirmação**: "Selar o pergaminho" salva em `gameState.sched.requests` e no banco local `triforce_agenda_v1` (sobrevive ao reinício da jornada), toca a fanfarra, anima a Triforce, dá a conquista "Primeira Conversa de Alinhamento" (+50 XP) e registra no Relatório Final.
+- **Para a liderança receber de verdade**: preencha em `src/domain/config.js` o `leaderEmail` (entra no convite) e/ou `webhookUrl` (POST em JSON para Apps Script, Power Automate, Zapier ou Slack). Sem isso, o registro fica só no navegador do colaborador. Um site estático não tem como enviar e-mail por conta própria.
+
+## Relatório Final
+A tela de vitória mostra autonomia e agenda. "Copiar relatório (JSON)" exporta `getFinalReport()`. "Continuar explorando" fecha a tela para quem ainda quer agendar no Pedestal.

@@ -110,6 +110,7 @@ function buildSheets() {
     });
     SHEETS[id] = c;
   }
+  if (typeof buildOwlSheet === 'function') buildOwlSheet();
 }
 function drawActor(ctx, id, x, y, dir, f, dy) {
   x = Math.round(x / 2) * 2; y = Math.round(y / 2) * 2; dy = dy || 0;

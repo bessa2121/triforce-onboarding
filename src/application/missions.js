@@ -225,11 +225,12 @@ function tryInteract() {
 }
 
 function handleObjectInteraction(id) {
+  clearGuide(id);
   if (id === 'board_kokiri') {
     if (gameState.currentMission === 0) {
       startDialog([
         { speaker: 'PLACA DE KOKIRI', role: 'Aviso do Reino', text: 'Bem-vindo a Hyrule! Sua jornada passa por 5 regiões: Kokiri Village, Hyrule Field, Lost Woods, Gerudo Valley e Temple of Time. Comece falando com Talon (TI), na Oficina daqui.' },
-        { speaker: 'NAVI', role: 'Guia', text: 'Muito bem! Você aprendeu a se mover e interagir. Atenção: as perguntas são difíceis, erros custam corações e cada resposta vem com explicação. Abra o Diário (J) sempre que precisar.' }
+        { speaker: 'NAVI', role: 'Guia', text: 'Muito bem! Você aprendeu a se mover e interagir. Atenção: as perguntas são difíceis, erros custam corações e cada resposta vem com explicação. Abra o Diário (J) sempre que precisar, e lembre: a coruja Kaepora Gaebora, em Kokiri Village, é a sua Central de Ajuda.' }
       ], () => { addXP(50, false); completeMission(0); });
     } else {
       startDialog([{ speaker: 'PLACA DE KOKIRI', role: 'Mapa', text: 'Kokiri Village (TI) | Hyrule Field (Equipe) | Lost Woods (RH) | Gerudo Valley (Gestão) | Temple of Time (Segurança e Desafio Final).' }]);
@@ -254,16 +255,25 @@ function handleObjectInteraction(id) {
       startDialog([{ speaker: 'TESOURO ENCONTRADO!', role: 'Item Colecionável', text: `Você encontrou "${obj.item}" (+${obj.xp} XP)! Veja seus itens na Bolsa.` }]);
     }
   } else if (id === 'pedestal') {
-    if (gameState.currentMission >= 6 && gameState.triforce.wisdom && gameState.triforce.power && gameState.triforce.courage) {
-      startDialog([{ speaker: 'NAVI', role: 'Guia', text: 'A Triforce brilha! Fale com a Princesa Zelda logo acima para iniciar o Desafio Final!' }]);
-    } else {
-      startDialog([{ speaker: 'PEDESTAL DA TRIFORCE', role: 'Temple of Time', text: 'Reúna os 3 Fragmentos (Coragem, Sabedoria e Poder) e passe pelo teste de Impa para despertar este pedestal.' }]);
-    }
+    pedestalInteract();
   }
 }
 
 function handleNPCInteraction(id) {
   const m = gameState.currentMission, Q = QUIZ[m], npc = npcs.find(n => n.id === id);
+  clearGuide(id);
+  if (id === 'kaepora') {
+    const first = autonomyState().visits === 0;
+    startDialog([{ speaker: 'KAEPORA GAEBORA', role: 'Mentor de Autonomia', text: first
+      ? 'Hoo hoo! Escute, Link: quem sabe onde procurar a resposta chega mais longe do que quem sabe tudo. Eu guardo respostas práticas e aponto o sábio certo para cada dúvida.'
+      : 'Hoo hoo! De volta aos meus pergaminhos? Sobre o que quer saber desta vez?',
+      choices: [
+        { label: 'Abrir a Central de Ajuda', action: () => openKaepora() },
+        { label: 'Só passando por aqui.', action: () => {} }
+      ] }]);
+    return;
+  }
+  markNpcMet(id);
   if (Q && Q.npc === id) {
     startDialog([{ speaker: npc.name.toUpperCase(), role: npc.role, text: Q.intro, choices: [
       { label: 'Estou pronto. Pode perguntar.', action: () => startQuiz(m) },
@@ -347,6 +357,6 @@ function showVictoryScreen() {
     <div class="sim-card"><strong>XP & Nível:</strong> ${gameState.xp} XP (Nv. ${lvlInfo.lvl} • ${lvlInfo.title})</div>
     <div class="sim-card"><strong>Tempo:</strong> ${mins}m ${secs}s</div>
     <div class="sim-card"><strong>Colecionáveis:</strong> ${(gameState.collectibles || []).length}/2 itens</div>
-    <div class="sim-card"><strong>Conquistas:</strong> ${(gameState.achievements || []).length} desbloqueadas</div>`;
+    <div class="sim-card"><strong>Conquistas:</strong> ${(gameState.achievements || []).length} desbloqueadas</div>` + reportCards();
   document.getElementById('victory-modal').classList.add('active');
 }

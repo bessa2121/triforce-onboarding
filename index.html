@@ -10,6 +10,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="assets/styles/main.css" />
   <link rel="stylesheet" href="assets/styles/theme.css" />
+  <link rel="stylesheet" href="assets/styles/features.css" />
 </head>
 <body>
 <div id="game-wrapper">
@@ -145,6 +146,36 @@
     </div>
   </div>
 
+
+  <!-- Kaepora Gaebora: Central de Ajuda -->
+  <div class="modal-overlay" id="kaepora-modal">
+    <div class="modal-card kaepora-card">
+      <div class="k-head">
+        <canvas id="kaepora-portrait" width="64" height="64"></canvas>
+        <div>
+          <h2 class="modal-title" style="text-align:left;margin:0">KAEPORA GAEBORA</h2>
+          <div class="k-role">Mentor de Autonomia &bull; Central de Ajuda</div>
+        </div>
+      </div>
+      <div class="k-search">
+        <input id="kaepora-q" type="text" maxlength="80" placeholder="Digite uma palavra-chave (ex.: senha, férias, feedback)" autocomplete="off">
+        <button class="retro-btn gold" data-act="search">Buscar</button>
+      </div>
+      <div class="k-chips" id="kaepora-chips"></div>
+      <div id="kaepora-view"></div>
+      <div style="text-align:right; margin-top:14px;"><button class="retro-btn" data-act="close">Fechar [Esc]</button></div>
+    </div>
+  </div>
+
+  <!-- Pedestal Central: agenda real com a liderança -->
+  <div class="modal-overlay" id="pedestal-modal">
+    <div class="scroll-card">
+      <div class="scroll-rod"></div>
+      <div class="scroll-paper"><div id="pedestal-body"></div></div>
+      <div class="scroll-rod"></div>
+    </div>
+  </div>
+
   <!-- Pause Modal -->
   <div class="modal-overlay" id="pause-modal">
     <div class="modal-card" style="text-align:center;">
@@ -175,17 +206,23 @@
       <div class="diary-entry" style="text-align:left; border-left-color:#8ecae6;">
         <strong>Mensagem Central:</strong> "Você não precisa conhecer todo o reino no primeiro dia. Precisa saber como explorá-lo, com quem contar e como contribuir."
       </div>
-      <button class="retro-btn gold" onclick="resetGameConfirm()">Jogar Novamente</button>
+      <div style="display:flex; gap:12px; justify-content:center; flex-wrap:wrap;">
+        <button class="retro-btn primary" onclick="copyReport()">Copiar relatório (JSON)</button>
+        <button class="retro-btn" onclick="closeVictory()">Continuar explorando</button>
+        <button class="retro-btn gold" onclick="resetGameConfirm()">Jogar Novamente</button>
+      </div>
     </div>
   </div>
 </div>
 
 
   <script src="src/infrastructure/audio.js"></script>
+  <script src="src/domain/config.js"></script>
   <script src="src/domain/state.js"></script>
   <script src="src/domain/world.js"></script>
   <script src="src/presentation/render/pixel.js"></script>
   <script src="src/presentation/render/sprites.js"></script>
+  <script src="src/presentation/render/kaepora-art.js"></script>
   <script src="src/presentation/render/portraits.js"></script>
   <script src="src/presentation/render/icons.js"></script>
   <script src="src/presentation/render/world-art.js"></script>
@@ -194,6 +231,8 @@
   <script src="src/application/dialog.js"></script>
   <script src="src/application/missions.js"></script>
   <script src="src/application/diary.js"></script>
+  <script src="src/application/kaepora.js"></script>
+  <script src="src/application/agenda.js"></script>
   <script src="src/application/session.js"></script>
   <script src="src/application/main.js"></script>
   <script>

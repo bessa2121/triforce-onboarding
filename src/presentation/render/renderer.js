@@ -32,6 +32,12 @@ function promptBubble(x, y, tick) {
   ctx.fillStyle = '#fdf3c9'; ctx.fillRect(bx, by, 18, 18); ctx.fillRect(bx + 8, by + 20, 2, 2); ctx.fillStyle = PAL.gold1; ctx.fillRect(bx, by + 16, 18, 2);
   ctx.fillStyle = PAL.wood0; E_GLYPH.forEach((row, ry) => [...row].forEach((c, rx) => { if (c === '1') ctx.fillRect(bx + 6 + rx * 2, by + 4 + ry * 2, 2, 2); }));
 }
+function guideArrow(x, y, tick) {
+  const bx = snap(x), by = snap(y) + (Math.floor(tick / 10) % 2) * 4;
+  const rows = [[8, 0, 10], [8, 10, 4], [-10, 10, 20], [-8, 14, 16], [-6, 18, 12], [-4, 22, 8], [-2, 26, 4]];
+  const draw = (col, g) => { ctx.fillStyle = col; ctx.fillRect(bx - 4 - g, by - g, 8 + 2 * g, 10 + 2 * g); [[-10, 10, 20], [-8, 14, 16], [-6, 18, 12], [-4, 22, 8], [-2, 26, 4]].forEach(([dx, dy, w]) => ctx.fillRect(bx + dx - g, by + dy - g, w + 2 * g, 4 + 2 * g)); };
+  draw(PAL.ol, 2); draw(PAL.gold1, 0); ctx.fillStyle = PAL.gold2; ctx.fillRect(bx - 2, by + 2, 2, 8);
+}
 function drawFlame(x, y, tick, seed) {
   const f = Math.floor(tick / 5 + seed) % 3;
   ctx.fillStyle = PAL.ol; ctx.fillRect(x - 6, y + 2, 12, 6); ctx.fillStyle = PAL.st1; ctx.fillRect(x - 4, y + 2, 8, 6);
@@ -69,6 +75,7 @@ function renderFrame(tick) {
     const blink = (tick + n.x) % 190 < 8, bob = Math.floor((tick + n.x) / 36) % 2 ? 2 : 0;
     drawActor(ctx, n.id, n.x, n.y, dir, blink ? 4 : 0, bob ? 0 : 0); nameTag(n.name, n.x, n.y - 42 - (bob ? 0 : 0));
     if (near(n)) promptBubble(n.x, n.y - 66, tick);
+    if (gameState.guideTarget === n.id) guideArrow(n.x, n.y - 134, tick);
   } }));
   interactables.forEach(o => ents.push({ y: o.y, draw() {
     const opened = o.type === 'secret_chest' && (gameState.collectibles || []).includes(o.item);
@@ -76,7 +83,12 @@ function renderFrame(tick) {
     ctx.fillStyle = PAL.shadow; ctx.fillRect(snap(o.x) - 16, snap(o.y) + 10, 32, 6);
     ctx.drawImage(spr, snap(o.x) - 18, snap(o.y) - 20, 36, 36);
     if (o.type === 'pedestal') { const n = [gameState.triforce.power, gameState.triforce.wisdom, gameState.triforce.courage].filter(Boolean).length; if (n) { ctx.fillStyle = `rgba(251,226,122,${0.12 * n + Math.sin(tick * .08) * .06})`; ctx.fillRect(snap(o.x) - 20, snap(o.y) - 40, 40, 40); } }
+    if (o.type === 'pedestal') {
+      if (typeof agendaUnlocked === 'function' && agendaUnlocked()) { const pl = 0.18 + Math.sin(tick * .1) * .1; ctx.fillStyle = `rgba(120,200,255,${pl})`; ctx.fillRect(snap(o.x) - 26, snap(o.y) - 6, 52, 22); ctx.fillStyle = `rgba(251,226,122,${pl + .1})`; ctx.fillRect(snap(o.x) - 14, snap(o.y) - 48 - (Math.floor(tick / 14) % 2) * 2, 28, 4); }
+      nameTag(o.name, o.x, o.y - 26);
+    }
     if (near(o)) promptBubble(o.x, o.y - 34, tick);
+    if (gameState.guideTarget === o.id) guideArrow(o.x, o.y - 96, tick);
   } }));
   const walkSeq = [0, 1, 0, 3];
   ents.push({ y: p.y, draw() { drawActor(ctx, 'link', p.x, p.y, p.dir || 'down', moving ? walkSeq[Math.floor(tick / 6) % 4] : ((tick % 200 < 8) ? 4 : 0), 0); drawNavi(p.x, p.y, tick); } });
