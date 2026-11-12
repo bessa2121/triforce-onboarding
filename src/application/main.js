@@ -75,7 +75,7 @@ function updatePlayer() {
   if (!gameState.started || isPaused || isDialogOpen || window.__restBusy || document.querySelector('.modal-overlay.active')) return;
   if (AudioEngine.stepCooldown > 0) AudioEngine.stepCooldown--;
 
-  const speed = 3.6 * (hasReward('boots') ? 1.15 : 1) * (keys['shift'] ? 1.6 : 1);
+  const speed = 3.6 * (hasReward('boots') ? 1.15 : 1) * (keys['shift'] ? 1.6 : 1) * Math.min(2.5, (R3.dt || .0167) * 60);
   let ix = 0, iy = 0;
   if (keys['w'] || keys['arrowup'] || touchDir.up) iy += 1;
   if (keys['s'] || keys['arrowdown'] || touchDir.down) iy -= 1;
@@ -86,7 +86,7 @@ function updatePlayer() {
   if (ix || iy) {
     const l = Math.hypot(ix, iy), y = R3.yaw, fx = -Math.sin(y), fz = -Math.cos(y);
     dx = (fx * iy / l + Math.cos(y) * ix / l) * speed; dy = (fz * iy / l - Math.sin(y) * ix / l) * speed;
-    R3.face = Math.atan2(dx, dy); R3.moving = true; R3.walk += .28;
+    R3.face = Math.atan2(dx, dy); R3.moving = true; R3.walk += .28 * Math.min(2.5, (R3.dt || .0167) * 60);
     gameState.player.dir = Math.abs(dx) > Math.abs(dy) ? (dx < 0 ? 'left' : 'right') : (dy < 0 ? 'up' : 'down');
   }
   if (dx !== 0 || dy !== 0) {
@@ -112,6 +112,7 @@ function checkCollision(x, y, r) {
 
 
 function gameLoop() {
+  const now = performance.now(); R3.dt = Math.min(.05, (now - (R3.t0 || now)) / 1000); R3.t0 = now;
   animTick++;
   updatePlayer();
   renderFrame3D(animTick);
