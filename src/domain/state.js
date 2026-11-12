@@ -5,8 +5,11 @@ const STORAGE_KEY = 'link_onboarding_save_v2';
 
 const DEFAULT_STATE = {
   started: false,
-  hearts: 5,
-  maxHearts: 5,
+  rupees: 0,          // recompensa por acertos
+  streak: 0,          // combo atual de acertos seguidos
+  bestStreak: 0,
+  rewards: [],        // itens desbloqueados por marcos de rupias
+  perfectMissions: 0,
   xp: 0,
   correctAnswers: 0,
   totalAttempts: 0,

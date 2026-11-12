@@ -12,6 +12,7 @@ window.addEventListener('keydown', (e) => {
     return;
   }
   keys[k] = true;
+  if (k === 'm' && gameState.started && typeof toggleMinimap === 'function' && !document.querySelector('.modal-overlay.active')) toggleMinimap();
 
   if (!gameState.started) return;
   if (k === 'escape') {
@@ -70,7 +71,7 @@ function updatePlayer() {
   if (!gameState.started || isPaused || isDialogOpen || document.querySelector('.modal-overlay.active')) return;
   if (AudioEngine.stepCooldown > 0) AudioEngine.stepCooldown--;
 
-  const speed = 3.6;
+  const speed = 3.6 * (hasReward('boots') ? 1.15 : 1);
   let dx = 0, dy = 0;
   if (keys['w'] || keys['arrowup'] || touchDir.up) { dy -= speed; gameState.player.dir = 'up'; }
   if (keys['s'] || keys['arrowdown'] || touchDir.down) { dy += speed; gameState.player.dir = 'down'; }

@@ -4,7 +4,7 @@
 //   - Formulário em pergaminho, Google Calendar / agenda externa / .ics
 //   - Registro no estado + "banco" local + webhook opcional + Relatório Final
 // ============================================================================
-const LOCK_MESSAGE = 'Consulte os sábios e a Kaepora Gaebora antes de solicitar uma audiência real.';
+const LOCK_MESSAGE = 'Conclua a jornada e consulte os sábios e a Kaepora Gaebora antes de solicitar uma audiência real.';
 let pedestalStepArmed = true;
 let pedestalExternalOpened = false;
 
@@ -13,8 +13,8 @@ function schedState() {
   return gameState.sched;
 }
 function sectorsMet() { return (gameState.met || []).filter(id => AGENDA_CONFIG.sectorNpcs.includes(id)).length; }
-function agendaUnlocked() {
-  return sectorsMet() >= AGENDA_CONFIG.minSectorNpcs || autonomyState().consults >= AGENDA_CONFIG.minOwlConsults;
+function agendaUnlocked() {   // regra: só depois de terminar o jogo (Desafio Final concluído)
+  return !!gameState.victory || (gameState.completedMissions || []).includes(6);
 }
 function markNpcMet(id) {
   if (!AGENDA_CONFIG.sectorNpcs.includes(id)) return;
@@ -25,7 +25,7 @@ function notifyAgendaUnlock() {
   const s = schedState();
   if (agendaUnlocked() && !s.noticeShown) {
     s.noticeShown = true; saveGame();
-    showToast('O Pedestal Central despertou: você já pode pedir uma audiência real com a liderança (Temple of Time).');
+    showToast('Jornada concluída! O Pedestal Central despertou: peça uma audiência real com a liderança (Temple of Time).');
   }
 }
 
@@ -33,10 +33,10 @@ function notifyAgendaUnlock() {
 function pedestalInteract() {
   clearGuide('pedestal');
   if (!agendaUnlocked()) {
-    const faltam = Math.max(0, AGENDA_CONFIG.minSectorNpcs - sectorsMet());
+    const faltam = [1, 2, 3, 4, 5, 6].filter(n => !missionDone(n)).length;
     startDialog([
       { speaker: 'PEDESTAL CENTRAL', role: 'Temple of Time', text: LOCK_MESSAGE },
-      { speaker: 'NAVI', role: 'Guia', text: `O pedestal desperta quando você conversa com ${AGENDA_CONFIG.minSectorNpcs} sábios de setor (faltam ${faltam}) ou consulta a Kaepora Gaebora, a coruja de Kokiri Village.` }
+      { speaker: 'NAVI', role: 'Guia', text: `O pedestal desperta quando você termina o jogo: ${faltam === 1 ? 'falta 1 missão' : 'faltam ' + faltam + ' missões'}, contando o Desafio Final da Zelda. Em dúvida, a Kaepora Gaebora (Kokiri Village) ajuda no caminho.` }
     ]);
     return;
   }

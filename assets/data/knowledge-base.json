@@ -13,7 +13,7 @@
     "darunia":  { "label": "Darunia (Gestor / Liderança)", "where": "em Gerudo Valley", "how": "Cruze Lost Woods até o sul e siga o desfiladeiro a leste." },
     "impa":     { "label": "Impa (Segurança e Políticas)", "where": "em Temple of Time", "how": "Suba pela passagem ao norte de Gerudo Valley (x 1290 a 1400) até o Templo." },
     "zelda":    { "label": "Princesa Zelda (Liderança)", "where": "em Temple of Time", "how": "Fica no Templo, logo acima do Pedestal Central." },
-    "pedestal": { "label": "Pedestal Central (agenda com a liderança)", "where": "em Temple of Time, logo abaixo da Princesa Zelda", "how": "Libera depois que você conversar com 2 sábios ou consultar a Kaepora Gaebora." }
+    "pedestal": { "label": "Pedestal Central (agenda com a liderança)", "where": "em Temple of Time, logo abaixo da Princesa Zelda", "how": "Libera depois que você concluir toda a jornada, inclusive o Desafio Final da Zelda." }
   },
   "categories": [
     { "id": "acessos",    "label": "Acessos",           "desc": "Senhas, MFA, ferramentas e documentos" },
@@ -146,7 +146,7 @@
       "id": "conversa_lideranca", "category": "processos", "npc": "pedestal",
       "title": "Quero conversar com a liderança (1:1 ou mentoria)",
       "keywords": ["lideranca", "gestor", "reuniao", "1:1", "mentoria", "carreira", "agenda", "agendar", "conversa", "audiencia", "marcar"],
-      "answer": "Para dúvidas de projeto, feedback, carreira ou algo que vai além do jogo, use o Pedestal Central: você escolhe tema, data e horário e a conversa é registrada. Ele libera depois que você tentou resolver o básico com os sábios ou comigo.",
+      "answer": "Para dúvidas de projeto, feedback, carreira ou algo que vai além do jogo, use o Pedestal Central: você escolhe tema, data e horário e a conversa é registrada. Ele libera quando você conclui a jornada inteira, depois de tentar resolver o básico com os sábios e comigo.",
       "tip": "Chegue com a dúvida em uma frase e o que você já tentou."
     },
     {

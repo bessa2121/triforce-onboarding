@@ -13,7 +13,7 @@ function resizeCanvas() {
 window.addEventListener('resize', resizeCanvas);
 
 function initRenderer() {
-  resizeCanvas(); buildSheets(); buildEntitySprites(); worldLayer = bakeWorld();
+  resizeCanvas(); buildSheets(); buildEntitySprites(); worldLayer = bakeWorld(); if (typeof initMinimap === 'function') initMinimap();
   const r = rng(99); for (let i = 0; i < 90; i++) motes.push({ x: r() * WORLD_WIDTH, y: r() * WORLD_HEIGHT, ph: r() * 6.28, s: .2 + r() * .4 });
 }
 function snap(v) { return Math.round(v / 2) * 2; }
@@ -57,6 +57,7 @@ function renderFrame(tick) {
   const vw = canvas.width / VS, vh = canvas.height / VS, p = gameState.player;
   const cam = (pos, view, max) => view >= max ? (max - view) / 2 : Math.max(0, Math.min(max - view, pos - view / 2));
   const camX = snap(cam(p.x, vw, WORLD_WIDTH)), camY = snap(cam(p.y, vh, WORLD_HEIGHT));
+  window.__cam = { x: camX, y: camY, w: vw, h: vh };
   ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.fillStyle = '#0b130b'; ctx.fillRect(0, 0, canvas.width, canvas.height);
   ctx.setTransform(VS, 0, 0, VS, -camX * VS, -camY * VS); ctx.imageSmoothingEnabled = false;
   ctx.drawImage(worldLayer, 0, 0, worldLayer.width, worldLayer.height, 0, 0, WORLD_WIDTH, WORLD_HEIGHT);
@@ -104,4 +105,5 @@ function renderFrame(tick) {
     ctx.fillRect(snap(m.x), snap(m.y), 2, 2);
   });
   ctx.setTransform(1, 0, 0, 1, 0, 0);
+  if (typeof drawMinimap === 'function') drawMinimap(tick);
 }

@@ -16,11 +16,12 @@
 <div id="game-wrapper">
   <canvas id="gameCanvas"></canvas>
   <div id="region-fade"></div>
+  <div id="minimap-wrap" style="display:none" title="Minimapa (M para ampliar)"><canvas id="minimap" width="200" height="170"></canvas><div class="mm-cap">M: ampliar</div></div>
 
   <!-- HUD -->
   <div id="hud" style="display:none;">
     <div class="hud-panel">
-      <div class="hearts-row" id="hearts-container"></div>
+      <div class="rupee-row" id="rupee-row"></div>
       <div class="stats-line">
         <span>XP: <strong class="gold-text" id="hud-xp">0</strong></span>
         <span>Área: <strong id="hud-area">Kokiri Village</strong></span>
@@ -223,6 +224,7 @@
   <script src="src/presentation/render/pixel.js"></script>
   <script src="src/presentation/render/sprites.js"></script>
   <script src="src/presentation/render/kaepora-art.js"></script>
+  <script src="src/presentation/render/minimap.js"></script>
   <script src="src/presentation/render/portraits.js"></script>
   <script src="src/presentation/render/icons.js"></script>
   <script src="src/presentation/render/world-art.js"></script>

@@ -92,10 +92,12 @@ function searchKB(q) {
 }
 
 function nextStepEntry() {
-  const m = gameState.currentMission, Q = QUIZ[m];
-  if (m === 0) return { id: 'next_step', title: 'Qual é o meu próximo passo?', category: 'jornada', npc: 'board_kokiri', answer: 'Leia a Placa de Kokiri, logo à frente da sua casa (tecla E). Ela inicia a sua jornada.', tip: 'Depois disso, fale com Talon na Oficina TI.' };
-  if (Q) return { id: 'next_step', title: 'Qual é o meu próximo passo?', category: 'jornada', npc: Q.npc, answer: `Sua missão atual é "${Q.title}". ${Q.hint}`, tip: m === 2 ? 'O Baú de Ferramentas, ao sul de Hyrule Field, também abre este desafio.' : 'Se errar, leia a explicação e consulte o Diário (J).' };
-  return { id: 'next_step', title: 'Qual é o meu próximo passo?', category: 'jornada', npc: 'pedestal', answer: 'Você concluiu todas as missões! Se ainda houver dúvidas além do jogo, peça uma audiência real com a liderança no Pedestal Central.', tip: 'Chegue com a dúvida em uma frase.' };
+  const base = { id: 'next_step', title: 'Qual é o meu próximo passo?', category: 'jornada' };
+  if (gameState.victory || missionDone(6)) return { ...base, npc: 'pedestal', answer: 'Você concluiu todas as missões! Se ainda houver dúvidas além do jogo, peça uma audiência real com a liderança no Pedestal Central.', tip: 'Chegue com a dúvida em uma frase e com o que já tentou.' };
+  if (finalUnlocked()) return { ...base, npc: 'zelda', answer: 'Os cinco sábios já foram ouvidos. Falta o Desafio Final com a Princesa Zelda, em Temple of Time.', tip: 'Desta vez, sem dicas: revise o Diário (J) se precisar.' };
+  const pend = pendingMissions(), p = gameState.player;
+  const near = pend.map(n => ({ n, npc: QUIZ[n].npc })).sort((a, b) => { const A = placePos(a.npc), B = placePos(b.npc); return Math.hypot(A.x - p.x, A.y - p.y) - Math.hypot(B.x - p.x, B.y - p.y); })[0];
+  return { ...base, npc: near.npc, answer: `Você pode seguir a ordem que preferir. Ainda faltam: ${pend.map(missionNpcName).join(', ')}. O mais perto de você agora é ${missionNpcName(near.n)}.`, tip: 'Cada sábio faz 3 perguntas. Acertos rendem XP, rupias e combo.' };
 }
 
 // ---------------------------------------------------------------- UI
@@ -137,7 +139,7 @@ function renderKaeporaView() {
   } else if (kView.mode === 'entry') {
     const e = kView.entry, r = e.npc ? routeInfo(e.npc) : null;
     let status = '';
-    if (e.npc === 'pedestal' && typeof agendaUnlocked === 'function') status = `<div class="k-status">${agendaUnlocked() ? 'O Pedestal está liberado para você.' : 'O Pedestal ainda está bloqueado: converse com 2 sábios ou consulte-me mais uma vez.'}</div>`;
+    if (e.npc === 'pedestal' && typeof agendaUnlocked === 'function') status = `<div class="k-status">${agendaUnlocked() ? 'O Pedestal está liberado para você.' : 'O Pedestal ainda está bloqueado: ele só abre depois que você conclui toda a jornada, inclusive o Desafio Final.'}</div>`;
     v.innerHTML = `
       <div class="k-answer"><h3>${kEsc(e.title)}</h3><p>${kEsc(e.answer)}</p>${e.tip ? `<p class="k-tip"><b>Dica:</b> ${kEsc(e.tip)}</p>` : ''}</div>
       ${r ? `<div class="k-route"><h4>Onde procurar</h4><p><b>${kEsc(r.label)}</b>, ${kEsc(r.where)}.</p><p>${kEsc(r.direction)}</p>${r.how ? `<p class="k-how">${kEsc(r.how)}</p>` : ''}${status}

@@ -52,7 +52,7 @@ Coruja em Kokiri Village (perto do início). Ao conversar, abre a Central de Aju
 
 ## Pedestal Central: agenda real com a liderança
 Em Temple of Time, logo abaixo da Zelda. Pisar nele pela primeira vez ou apertar E abre o pergaminho.
-- **Trava de autonomia**: libera após conversar com 2 NPCs de setor **ou** consultar 1 resposta da Kaepora. Antes disso: "Consulte os sábios e a Kaepora Gaebora antes de solicitar uma audiência real." Os limites ficam em `src/domain/config.js`.
+- **Trava**: só libera depois que o jogador **termina o jogo** (as 6 missões, incluindo o Desafio Final da Zelda). Antes disso, o pedestal avisa e a Navi diz quantas missões faltam.
 - **Formulário**: nome, e-mail, tema (Dúvida de Projeto, Feedback, Carreira, Outro), dúvida em uma frase (opcional), data e horário (dias úteis, 09:00 a 18:00, configurável).
 - **Agenda real**: "Abrir no Google Calendar" (evento preenchido, liderança como convidada), "Baixar .ics" e, se `bookingUrl` estiver configurado, botão para Calendly/Cal.com com nome, e-mail e tema na URL.
 - **Confirmação**: "Selar o pergaminho" salva em `gameState.sched.requests` e no banco local `triforce_agenda_v1` (sobrevive ao reinício da jornada), toca a fanfarra, anima a Triforce, dá a conquista "Primeira Conversa de Alinhamento" (+50 XP) e registra no Relatório Final.
@@ -60,3 +60,10 @@ Em Temple of Time, logo abaixo da Zelda. Pisar nele pela primeira vez ou apertar
 
 ## Relatório Final
 A tela de vitória mostra autonomia e agenda. "Copiar relatório (JSON)" exporta `getFinalReport()`. "Continuar explorando" fecha a tela para quem ainda quer agendar no Pedestal.
+
+## Jogabilidade (v2.1)
+- **Ordem livre**: os cinco sábios (Talon, Mido, Saria, Darunia e Impa) podem ser visitados em qualquer ordem, e o baú de Hyrule também abre o desafio do Mido. A Zelda abre o Desafio Final quando os cinco estiverem concluídos.
+- **Perguntas**: 3 por missão, em cenários mais complexos, com alternativas de tamanho parecido (a correta não é a maior nem a menor por padrão). Os textos ficam em `src/application/missions.js`, objeto `QUIZ`: `[cenário, correta, errada1, errada2, errada3, explicação]`.
+- **Sem corações**: errar não custa vida; zera o combo, mostra a explicação e a pergunta volta depois.
+- **Recompensas**: cada acerto dá XP e rupias (bônus por acertar de primeira e por combo); fim de missão dá bônus, e missão sem erros dá o selo "Mão Firme". Marcos de rupias liberam Botas de Pégaso (100, +15% de velocidade), Bênção de Nayru (300, +25% de XP) e o título Mestre das Rupias (600). Tudo aparece no relatório final.
+- **Minimapa**: canto superior direito; M ou clique alterna entre pequeno e grande. Mostra jogador, campo de visão, sábios pendentes (dourado) e concluídos (verde), Kaepora, Zelda, Pedestal e o destino marcado pela coruja.

@@ -6,6 +6,7 @@ const UI = (() => {
   const SPK = ['....O.......', '...OO...O...', '..OOO....O..', 'OOOOO..O.O..', 'OOOOO..O.O..', 'OOOOO..O.O..', '..OOO....O..', '...OO...O...', '....O.......'];
   const MUTE = ['....O.......', '...OO.......', '..OOO.O...O.', 'OOOOO..O.O..', 'OOOOO...O...', 'OOOOO..O.O..', '..OOO.O...O.', '...OO.......', '....O.......'];
   return {
+    rupee() { return cache.rupee || (cache.rupee = fromMap(['...O...', '..OhO..', '.OhggO.', 'OhgggdO', 'OhgggdO', 'OggggdO', 'OggggdO', '.OgggO.', '..OgO..', '...O...'], { O: '#0e2a14', g: '#3ed06a', h: '#c8ffd8', d: '#22934a' })); },
     heart(full) { const k = 'h' + full; return cache[k] || (cache[k] = fromMap(HEART, full ? { O: '#2a0f14', r: '#e0383a', h: '#ff9aa0', d: '#a01f2e' } : { O: '#1a0c10', r: '#4a3a40', h: '#5c4a52', d: '#3a2c32' })); },
     icon(name) { return fromMap(name === 'mute' ? MUTE : SPK, { O: '#fbe27a' }); },
     triforce(f, lit) {

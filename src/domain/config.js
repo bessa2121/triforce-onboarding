@@ -11,8 +11,7 @@ const AGENDA_CONFIG = {
   workDays: [1, 2, 3, 4, 5],             // 0=dom ... 6=sáb
   workStart: '09:00',
   workEnd: '18:00',
-  minSectorNpcs: 2,                      // trava de autonomia: nº de NPCs de setor conversados...
-  minOwlConsults: 1,                     // ...OU nº de respostas consultadas na Kaepora Gaebora
+  // O Pedestal só libera depois que o jogador conclui a jornada (6 missões, incluindo o Desafio Final).
   sectorNpcs: ['talon', 'mido', 'saria', 'darunia', 'impa'],
   topics: ['Dúvida de Projeto', 'Feedback', 'Carreira', 'Outro'],
   storeKey: 'triforce_agenda_v1'         // "banco" local: sobrevive ao reinício da jornada

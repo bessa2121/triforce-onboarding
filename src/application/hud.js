@@ -24,16 +24,45 @@ function showToast(msg) {
   }, 3500);
 }
 
-const MISSION_OBJECTIVES = {
-  0: { badge: 'COMEÇO • TUTORIAL', title: 'Leia a Placa de Kokiri (E)' },
-  1: { badge: 'MISSÃO 1/6 • KOKIRI VILLAGE', title: 'Fale com Talon (TI) na Oficina' },
-  2: { badge: 'MISSÃO 2/6 • HYRULE FIELD', title: 'Fale com Mido ou abra o Baú de Ferramentas' },
-  3: { badge: 'MISSÃO 3/6 • LOST WOODS', title: 'Passagem ao sul do campo: fale com Saria' },
-  4: { badge: 'MISSÃO 4/6 • GERUDO VALLEY', title: 'Atravesse a floresta e fale com Darunia' },
-  5: { badge: 'MISSÃO 5/6 • TEMPLE OF TIME', title: 'Suba a passagem ao norte: fale com Impa' },
-  6: { badge: 'MISSÃO FINAL • 6/6', title: 'Fale com a Princesa Zelda no Templo' },
-  7: { badge: 'CONCLUÍDO', title: 'Jornada de Onboarding Finalizada!' }
-};
+function currentObjective() {
+  if (gameState.victory || missionDone(6)) return { badge: 'JORNADA CONCLUÍDA', title: 'Pedestal Central liberado: peça sua audiência' };
+  if (finalUnlocked()) return { badge: 'MISSÃO FINAL', title: 'Fale com a Princesa Zelda no Templo' };
+  const pend = pendingMissions().map(missionNpcName);
+  const done = 5 - pend.length;
+  return { badge: `MISSÕES ${done}/5 • ORDEM LIVRE`, title: 'Faltam: ' + (pend.length > 3 ? pend.slice(0, 3).join(', ') + '...' : pend.join(', ')) };
+}
+
+// ---- Recompensas por acertos: rupias, combo e itens por marcos de rupias
+const REWARD_TIERS = [
+  { id: 'boots', at: 100, name: 'Botas de Pégaso', desc: '+15% de velocidade ao caminhar' },
+  { id: 'nayru', at: 300, name: 'Bênção de Nayru', desc: '+25% de XP em cada acerto' },
+  { id: 'crown', at: 600, name: 'Título: Mestre das Rupias', desc: 'Honraria no relatório final' }
+];
+function hasReward(id) { return (gameState.rewards || []).includes(id); }
+function addRupees(n) {
+  gameState.rupees = (gameState.rupees || 0) + n;
+  if (!gameState.rewards) gameState.rewards = [];
+  REWARD_TIERS.forEach(t => {
+    if (gameState.rupees >= t.at && !gameState.rewards.includes(t.id)) {
+      gameState.rewards.push(t.id);
+      AudioEngine.playChest();
+      spawnParticles(gameState.player.x, gameState.player.y - 10, '#7ef0a0', 26);
+      showToast(`Recompensa desbloqueada: ${t.name} (${t.desc})`);
+      if (t.id === 'crown') unlockAchievement('rupee_master', 'Mestre das Rupias');
+    }
+  });
+  updateHUD(); saveGame();
+}
+function rewardCorrect(baseXp, firstTry) {
+  gameState.streak = (gameState.streak || 0) + 1;
+  gameState.bestStreak = Math.max(gameState.bestStreak || 0, gameState.streak);
+  let xp = baseXp + (firstTry ? 10 : 0);
+  if (hasReward('nayru')) xp = Math.round(xp * 1.25);
+  const rupees = 10 + (firstTry ? 5 : 0) + Math.min(gameState.streak - 1, 5) * 5;
+  addXP(xp); addRupees(rupees);
+  if (gameState.streak === 5) unlockAchievement('combo5', 'Combo x5');
+  return { xp, rupees, first: firstTry, combo: gameState.streak };
+}
 
 function getLevelInfo(xp) {
   if (xp >= 650) return { lvl: 5, title: 'Herói de Hyrule', min: 650, max: 900 };
@@ -53,12 +82,8 @@ function unlockAchievement(id, title) {
 }
 
 function updateHUD() {
-  const hc = document.getElementById('hearts-container');
-  hc.innerHTML = '';
-  for (let i = 0; i < gameState.maxHearts; i++) {
-    const full = i < gameState.hearts;
-    hc.innerHTML += `<img class="heart-icon" alt="" src="${UI.heart(full)}">`;
-  }
+  const rr = document.getElementById('rupee-row');
+  if (rr) rr.innerHTML = `<img class="rupee-icon" alt="" src="${UI.rupee()}"><strong class="rupee-count">${gameState.rupees || 0}</strong>` + (gameState.streak >= 2 ? `<span class="combo-badge">Combo x${gameState.streak}</span>` : '');
 
   document.getElementById('hud-xp').textContent = gameState.xp;
   const lvlInfo = getLevelInfo(gameState.xp);
@@ -68,7 +93,7 @@ function updateHUD() {
   const lvlEl = document.getElementById('hud-level');
   if (lvlEl) lvlEl.textContent = `Nv. ${lvlInfo.lvl} • ${lvlInfo.title}`;
 
-  const objInfo = MISSION_OBJECTIVES[gameState.currentMission] || MISSION_OBJECTIVES[7];
+  const objInfo = currentObjective();
   const badgeEl = document.getElementById('hud-mission-badge');
   const titleEl = document.getElementById('hud-mission-title');
   if (badgeEl) badgeEl.textContent = objInfo.badge;
@@ -94,25 +119,6 @@ function updateHUD() {
   }
 }
 
-const CHECKPOINT = { 'Kokiri Village': [180, 360], 'Hyrule Field': [700, 400], 'Lost Woods': [700, 800], 'Gerudo Valley': [1340, 800], 'Temple of Time': [1400, 400] };
-function loseHeart(reason) {
-  AudioEngine.playError();
-  gameState.hearts--;
-  gameState.totalAttempts++;
-  if (gameState.hearts <= 0) {
-    gameState.hearts = gameState.maxHearts;
-    const c = CHECKPOINT[lastAreaName] || CHECKPOINT['Kokiri Village'];
-    gameState.player.x = c[0]; gameState.player.y = c[1];
-    updateHUD(); saveGame();
-    showToast('Você perdeu todos os corações! Navi te levou ao posto da região. Revise o Diário (J) e tente de novo.');
-    return true;
-  }
-  updateHUD();
-  showToast(reason || 'Resposta incorreta! Você perdeu 1 coração.');
-  saveGame();
-  return false;
-}
-
 function addXP(amount, isCorrect = true) {
   AudioEngine.playSuccess();
   spawnParticles(gameState.player.x, gameState.player.y - 10, '#f4c430', 14);
@@ -126,22 +132,21 @@ function addXP(amount, isCorrect = true) {
 }
 
 const MISSION_LEARNINGS = {
-  1: { title: 'Missão 1: Acessos e Ferramentas', reward: '+140 XP • Mestre dos Acessos', lesson: 'Credencial é pessoal, MFA não solicitado é alerta e ferramenta fora da lista oficial é risco.' },
-  2: { title: 'Missão 2: Regras Não Ditas', reward: '+140 XP • Fragmento da Coragem', lesson: 'Avise cedo, pergunte com contexto, discorde com proposta e dê crédito.' },
-  3: { title: 'Missão 3: Políticas da Empresa', reward: '+140 XP • Fragmento da Sabedoria', lesson: 'Direito e política andam juntos: alinhe, registre e use os canais oficiais.' },
-  4: { title: 'Missão 4: Feedback e Prioridades', reward: '+140 XP • Fragmento do Poder', lesson: 'Peça feedback específico, transforme-o em combinado e exponha conflitos de prioridade.' },
-  5: { title: 'Missão 5: Defesa contra Ataques', reward: '+140 XP', lesson: 'Pare, verifique por outro canal e reporte: vale para ligação, porta, pendrive, e-mail e Wi-Fi.' }
+  1: { title: 'Missão 1: Acessos e Ferramentas', lesson: 'Credencial é pessoal, MFA não solicitado é alerta e ferramenta fora da lista oficial é risco.' },
+  2: { title: 'Missão 2: Regras Não Ditas', lesson: 'Avise cedo, pergunte com contexto, discorde com proposta e dê crédito.' },
+  3: { title: 'Missão 3: Políticas da Empresa', lesson: 'Direito e política andam juntos: alinhe, registre e use os canais oficiais.' },
+  4: { title: 'Missão 4: Feedback e Prioridades', lesson: 'Peça feedback específico, transforme-o em combinado e exponha conflitos de prioridade.' },
+  5: { title: 'Missão 5: Defesa contra Ataques', lesson: 'Pare, verifique por outro canal e reporte: vale para ligação, porta, pendrive, e-mail e Wi-Fi.' }
 };
 
 function completeMission(num) {
   if (!gameState.completedMissions.includes(num)) gameState.completedMissions.push(num);
-  if (gameState.currentMission === num) gameState.currentMission = num + 1;
   const ach = { 1: ['m1', 'Mestre dos Acessos'], 2: ['m2', 'Espírito de Equipe'], 3: ['m3', 'Guardião das Políticas'], 4: ['m4', 'Mente Aberta ao Feedback'], 5: ['m5', 'Sentinela de Hyrule'] }[num];
   if (ach) unlockAchievement(ach[0], ach[1]);
   const sec = { 1: 'ferramentas', 2: 'equipe', 3: 'politicas', 4: 'feedback', 5: 'seguranca' }[num];
   if (sec && !gameState.diaryUnlocked.includes(sec)) gameState.diaryUnlocked.push(sec);
   const info = MISSION_LEARNINGS[num];
-  if (info) showToast(`Missão concluída: ${info.title} (${info.reward}) — ${info.lesson}`);
+  if (info) showToast(`Missão concluída: ${info.title}`);
   const tri = {
     2: ['courage', 'CORAGEM (Equipe & Operação)', 'Você dominou acessos, ferramentas e as regras não ditas da equipe!'],
     3: ['wisdom', 'SABEDORIA (RH & Cultura)', 'Você atravessou o labirinto das políticas da empresa!'],
