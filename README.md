@@ -1,6 +1,6 @@
 # Hyrule Onboarding Quest (LINK: A Jornada do Primeiro Dia)
 
-RPG 2D de onboarding corporativo em pixel art inspirada em Zelda. Site estático: **não há build**; a raiz do repositório é o site.
+RPG 3D (Three.js, low-poly procedural) de onboarding corporativo inspirado em Zelda; a lógica 2D original foi mantida. Site estático: **não há build**; a raiz do repositório é o site.
 
 ## Rodar / Deploy
 - Local: `npm run dev` (precisa de servidor http; não abra o `index.html` direto).
@@ -71,3 +71,9 @@ A tela de vitória mostra autonomia e agenda. "Copiar relatório (JSON)" exporta
 ## Fogueira (descanso e dashboard)
 Uma fogueira com feixe dourado ao estilo "graça", no centro de Hyrule Field. Interagir (E) mostra a faixa "FOGUEIRA ACESA" (1ª vez: +15 XP, +10 rupias, conquista Chama Acesa), salva o progresso e abre o dashboard: um brilho nasce na chama, o feixe sobe e o painel desabrocha a partir dela, com os cards entrando em cascata (animação em transform/opacity, suave, com suporte a `prefers-reduced-motion`).
 O painel traz missões, progresso do jogo, combo/acertos/jornada, acertos por área (gráfico de linha), domínio por área, trilha de respostas, "Onde você pode melhorar" (temas de revisão calculados pelos erros), tesouros, conquistas e status do Pedestal. Os dados vêm de `gameState.stats` (registrado a cada resposta). A coruja pode indicar a fogueira (pergunta "Onde vejo meu progresso?").
+
+
+## Versão 3D
+- `src/presentation/render3d/renderer3d.js`: mundo, personagens e câmera em terceira pessoa (Three.js r158 em `assets/vendor/`). O mapa 2D de `world.js` (x,y) vira (x, 0, z) com escala 0,05; colisões e interações continuam 2D.
+- Controles (no estilo Breaking Code): WASD relativo à câmera, Shift correr, Espaço pulo/pulo duplo, E interagir, arrastar mouse ou Q/C girar câmera, roda do mouse zoom.
+- O minimapa continua usando a arte 2D (`world-art.js`).

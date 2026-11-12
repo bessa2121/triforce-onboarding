@@ -29,7 +29,11 @@ window.addEventListener('keydown', (e) => {
     return;
   }
 
-  if (k === 'e' || k === ' ') {
+  if (k === ' ' && !isDialogOpen && !document.querySelector('.modal-overlay.active')) {
+    e.preventDefault(); const J = R3.jump; if (J.n < 2) { J.v = J.n ? .42 : .5; J.y = Math.max(J.y, .01); J.n++; }
+    return;
+  }
+  if (k === 'e' || (k === ' ' && isDialogOpen)) {
     if (isDialogOpen) {
       const nextBtn = document.getElementById('dialog-next-btn');
       if (nextBtn && nextBtn.style.display !== 'none') advanceDialog();
@@ -71,13 +75,20 @@ function updatePlayer() {
   if (!gameState.started || isPaused || isDialogOpen || window.__restBusy || document.querySelector('.modal-overlay.active')) return;
   if (AudioEngine.stepCooldown > 0) AudioEngine.stepCooldown--;
 
-  const speed = 3.6 * (hasReward('boots') ? 1.15 : 1);
-  let dx = 0, dy = 0;
-  if (keys['w'] || keys['arrowup'] || touchDir.up) { dy -= speed; gameState.player.dir = 'up'; }
-  if (keys['s'] || keys['arrowdown'] || touchDir.down) { dy += speed; gameState.player.dir = 'down'; }
-  if (keys['a'] || keys['arrowleft'] || touchDir.left) { dx -= speed; gameState.player.dir = 'left'; }
-  if (keys['d'] || keys['arrowright'] || touchDir.right) { dx += speed; gameState.player.dir = 'right'; }
-
+  const speed = 3.6 * (hasReward('boots') ? 1.15 : 1) * (keys['shift'] ? 1.6 : 1);
+  let ix = 0, iy = 0;
+  if (keys['w'] || keys['arrowup'] || touchDir.up) iy += 1;
+  if (keys['s'] || keys['arrowdown'] || touchDir.down) iy -= 1;
+  if (keys['a'] || keys['arrowleft'] || touchDir.left) ix -= 1;
+  if (keys['d'] || keys['arrowright'] || touchDir.right) ix += 1;
+  if (keys['q']) R3.yaw -= .03; if (keys['c']) R3.yaw += .03;
+  let dx = 0, dy = 0; R3.moving = false;
+  if (ix || iy) {
+    const l = Math.hypot(ix, iy), y = R3.yaw, fx = -Math.sin(y), fz = -Math.cos(y);
+    dx = (fx * iy / l + Math.cos(y) * ix / l) * speed; dy = (fz * iy / l - Math.sin(y) * ix / l) * speed;
+    R3.face = Math.atan2(dx, dy); R3.moving = true; R3.walk += .28;
+    gameState.player.dir = Math.abs(dx) > Math.abs(dy) ? (dx < 0 ? 'left' : 'right') : (dy < 0 ? 'up' : 'down');
+  }
   if (dx !== 0 || dy !== 0) {
     AudioEngine.playStep();
     const nx = gameState.player.x + dx;
@@ -103,7 +114,7 @@ function checkCollision(x, y, r) {
 function gameLoop() {
   animTick++;
   updatePlayer();
-  renderFrame(animTick);
+  renderFrame3D(animTick);
   requestAnimationFrame(gameLoop);
 }
-window.onload = function () { initRenderer(); gameLoop(); };
+window.onload = function () { initRenderer(); initRenderer3D(); gameLoop(); };

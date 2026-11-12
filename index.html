@@ -14,7 +14,8 @@
 </head>
 <body>
 <div id="game-wrapper">
-  <canvas id="gameCanvas"></canvas>
+  <canvas id="canvas3d"></canvas>
+  <canvas id="gameCanvas" style="display:none"></canvas>
   <div id="region-fade"></div>
   <div id="minimap-wrap" style="display:none" title="Minimapa (M para ampliar)"><canvas id="minimap" width="200" height="170"></canvas><div class="mm-cap">M: ampliar</div></div>
 
@@ -88,11 +89,12 @@
     <div class="modal-card" style="text-align:center;">
       <img class="pix-big pix-all" alt="Triforce" src="" style="margin-bottom:10px">
       <h1 class="modal-title" style="line-height:1.5">LINK: A JORNADA DO PRIMEIRO DIA</h1>
-      <p class="modal-subtitle">Uma aventura 2D de onboarding em Hyrule</p>
+      <p class="modal-subtitle">Uma aventura 3D de onboarding em Hyrule</p>
       <div class="diary-entry" style="text-align:left;">
         <strong>Controles:</strong><br>
-        • <strong>W A S D</strong> ou <strong>Setas</strong>: Mover Link<br>
-        • <strong>E</strong> ou <strong>Espaço</strong>: Conversar / Interagir<br>
+        • <strong>W A S D</strong> ou <strong>Setas</strong>: Mover Link (relativo à câmera) | <strong>Shift</strong>: correr<br>
+        • <strong>Espaço</strong>: Pular (2x: pulo duplo) | <strong>E</strong>: Conversar / Interagir<br>
+        • <strong>Arrastar o mouse</strong> ou <strong>Q / C</strong>: Girar câmera | <strong>Roda</strong>: zoom<br>
         • <strong>J</strong>: Abrir Diário de Jornada | <strong>ESC</strong>: Pausar<br>
         • <strong>1</strong> a <strong>4</strong>: Escolher resposta nas perguntas<br>
         • <strong>Celular:</strong> Use o direcional e o botão E na tela
@@ -229,6 +231,7 @@
 </div>
 
 
+  <script src="assets/vendor/three.min.js"></script>
   <script src="src/infrastructure/audio.js"></script>
   <script src="src/domain/config.js"></script>
   <script src="src/domain/state.js"></script>
@@ -242,6 +245,7 @@
   <script src="src/presentation/render/icons.js"></script>
   <script src="src/presentation/render/world-art.js"></script>
   <script src="src/presentation/render/renderer.js"></script>
+  <script src="src/presentation/render3d/renderer3d.js"></script>
   <script src="src/application/hud.js"></script>
   <script src="src/application/dialog.js"></script>
   <script src="src/application/missions.js"></script>
