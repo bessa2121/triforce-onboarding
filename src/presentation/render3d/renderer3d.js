@@ -16,30 +16,60 @@ function textSprite(text, bg, fg, scale) {
   s.scale.set(2.6 * (scale || 1), .65 * (scale || 1), 1); s.renderOrder = 9; return s;
 }
 
-function human(o) {
-  const g = new THREE.Group(), k = o.k || 1, sk = o.skin || 0xf2c9a0, B = o.body, boot = o.boot || 0x5a3a1a;
-  const legL = new THREE.Group(), legR = new THREE.Group(), armL = new THREE.Group(), armR = new THREE.Group();
-  [[legL, -.2], [legR, .2]].forEach(([l, x]) => { l.position.set(x, .86, 0); cyl(l, .15, .13, .6, o.pants || 0x5b4630, 0, -.3, 0, 6); cyl(l, .19, .17, .32, boot, 0, -.68, 0, 6); bx(l, .3, .14, .46, boot, 0, -.82, .08); g.add(l); });
-  [[armL, -.52], [armR, .52]].forEach(([a, x]) => { a.position.set(x, 1.58, 0); cyl(a, .14, .11, .62, o.sleeve || B, 0, -.3, 0, 6); cyl(a, .14, .14, .1, o.cuff || 0xf0ead6, 0, -.6, 0, 6); ball(a, .13, sk, 0, -.74, 0); g.add(a); });
-  cyl(g, .34, .42, .85, B, 0, 1.26, 0, 6); cyl(g, .44, .44, .12, o.belt || 0x6b4a22, 0, .88, 0, 6); bx(g, .15, .15, .05, 0xffd23f, 0, .88, .43, 0x443300);
-  if (o.dress) cone(g, .95, 1.35, B, 0, .72, 0, 8); else if (o.tunic) cone(g, .62, .6, B, 0, .76, 0, 6);
-  if (o.pads) { ball(g, .22, 0x9aa0b0, -.5, 1.66, 0); ball(g, .22, 0x9aa0b0, .5, 1.66, 0); }
-  if (o.spikes) { [-.5, .5].forEach(x => { cone(g, .14, .5, 0x6a4a30, x, 1.95, -.05, 4); cone(g, .1, .35, 0x6a4a30, x * .6, 2.05, -.2, 4); }); }
-  cyl(g, .12, .13, .16, sk, 0, 1.72, 0, 6);
-  ball(g, .42, sk, 0, 2.08, 0).scale.set(1, 1.08, .98);
-  [-.16, .16].forEach(x => { ball(g, .075, 0xffffff, x, 2.1, .35).scale.set(1, 1.2, .5); ball(g, .05, o.eye || 0x1a3a8a, x, 2.1, .39); bx(g, .17, .04, .04, o.hair, x, 2.24, .37).rotation.z = (o.frown ? -x * 1.6 : 0); });
-  bx(g, .12, .025, .03, 0x8a3a2a, 0, 1.9, .4); cone(g, .05, .12, sk, 0, 2.0, .42, 4).rotation.x = Math.PI / 2;
-  if (o.ears) [-1, 1].forEach(s => { const e = cone(g, .09, .32, sk, s * .46, 2.12, 0, 4); e.rotation.z = -s * 1.25; });
-  ball(g, .46, o.hair, 0, 2.2, -.05).scale.set(1.02, .78, 1.04); bx(g, .74, .12, .14, o.hair, 0, 2.32, .32).rotation.x = .4;
-  if (o.long) cyl(g, .36, .26, 1.05, o.hair, 0, 1.78, -.3, 6); else ball(g, .4, o.hair, 0, 2.02, -.2);
-  if (o.cap) { cone(g, .5, .6, o.cap, 0, 2.58, 0, 6); const t = cone(g, .3, .95, o.cap, 0, 2.75, -.32, 6); t.rotation.x = -1.1; ball(g, .1, 0xffe27a, 0, 2.9, -.78); }
-  if (o.hat) { cyl(g, .72, .72, .06, o.hat, 0, 2.42, 0, 10); cyl(g, .4, .46, .36, o.hat, 0, 2.6, 0, 10); cyl(g, .47, .47, .08, 0x6b3a1a, 0, 2.48, 0, 10); }
-  if (o.mus) bx(g, .32, .07, .06, o.hair, 0, 1.96, .41);
-  if (o.beard) ball(g, .26, o.hair, 0, 1.85, .25).scale.set(1.2, .8, .7);
-  if (o.crown) { cyl(g, .42, .42, .14, 0xffd23f, 0, 2.5, 0, 8, 0x553300); [-.28, 0, .28].forEach(x => cone(g, .07, .22, 0xffd23f, x, 2.66, .3 - Math.abs(x) * .5, 4)); }
-  if (o.gear) { const sh = cyl(g, .4, .4, .08, 0x2a5ac8, 0, 1.3, -.36, 6); sh.rotation.x = Math.PI / 2; bx(g, .16, .3, .04, 0xffd23f, 0, 1.3, -.42, 0x443300); const sw = bx(g, .08, .95, .05, 0xcfd8e8, .3, 1.75, -.42); sw.rotation.z = -.35; bx(g, .3, .08, .08, 0xffd23f, .22, 1.3, -.42); }
-  g.scale.setScalar(k); g.userData = { legL, legR, armL, armR }; return g;
+const V3 = (x, y, z) => new THREE.Vector3(x, y, z), matD = c => MAT['d' + c] || (MAT['d' + c] = new THREE.MeshLambertMaterial({ color: c, flatShading: true, side: THREE.DoubleSide }));
+function seg(g, A, B, rA, rB, c, n) { const d = B.clone().sub(A), m = new THREE.Mesh(new THREE.CylinderGeometry(rB, rA, d.length(), n || 6), mat(c)); m.position.copy(A).add(B).multiplyScalar(.5); m.quaternion.setFromUnitVectors(V3(0, 1, 0), d.normalize()); m.castShadow = true; g.add(m); return m; }
+function lathe(g, pts, c, sx) { const m = new THREE.Mesh(new THREE.LatheGeometry(pts.map(p => new THREE.Vector2(p[0], p[1])), 8), matD(c)); m.scale.set(sx || 1, 1, sx || 1); m.castShadow = true; g.add(m); return m; }
+function flat(g, geo, c, x, y, z, ry) { const m = new THREE.Mesh(geo, new THREE.MeshBasicMaterial({ color: c })); m.position.set(x, y, z); m.rotation.y = ry || 0; g.add(m); return m; }
+function tri(g, s, c, x, y, z) { const sh = new THREE.Shape(); sh.moveTo(0, s); sh.lineTo(-s * .9, -s * .6); sh.lineTo(s * .9, -s * .6); return flat(g, new THREE.ShapeGeometry(sh), c, x, y, z); }
+function eyes(head, ex, ey, ez, k, iris, ang) {
+  [-1, 1].forEach(s => { const e = new THREE.Group(); e.position.set(s * ex, ey, ez); e.rotation.y = s * ang;
+    [[.078, 0xffffff, 0], [.055, iris, .003], [.03, 0x0a0a14, .006]].forEach(([r, c, z]) => { const m = flat(e, new THREE.CircleGeometry(r * k, 10), c, 0, 0, z); m.scale.y = 1.25; }); head.add(e); });
 }
+function hairShell(hg, R, t0, t1, p0, p1, c) { const m = new THREE.Mesh(new THREE.SphereGeometry(R, 8, 6, p0, p1, t0, t1), matD(c)); m.castShadow = true; hg.add(m); return m; }
+
+function human(o) {
+  const g = new THREE.Group(), k = o.k || 1, sk = o.skin || 0xf2c9a0, B = o.body, fat = o.fat || 1, boot = o.boot || 0x6a4420, hc = o.hair, HY = 2.1;
+  const legs = [-.2, .2].map(x => { const l = new THREE.Group(); l.position.set(x * fat, .95, 0); cyl(l, .13, .13, .55, o.pants || 0xf5f0dc, 0, -.275, 0, 6); cyl(l, .17, .17, .5, boot, 0, -.7, 0, 6); bx(l, .3, .14, .42, boot, 0, -.88, .08); g.add(l); return l; });
+  const arms = [-1, 1].map(s => { const a = new THREE.Group(); a.position.set(s * (.52 * fat), 1.58, 0); ball(a, .17, B, 0, 0, 0); cyl(a, .13, .11, .6, B, 0, -.3, 0, 6); cyl(a, .135, .135, .1, o.cuff || 0xf0ead6, 0, -.62, 0, 6); ball(a, .13, sk, 0, -.74, 0); g.add(a); return a; });
+  lathe(g, [[.001, 1.74], [.18, 1.73], [.32, 1.66], [.36, 1.3], [.34, 1.02]], B, fat);
+  lathe(g, [[.385, 1.02], [.385, .9]], o.belt || 0x6b4a22, fat);
+  lathe(g, [[.37, .9], o.dress ? [.97, .12] : (o.short ? [.56, .55] : [.52, .58])], o.skirtCol || B, fat);
+  bx(g, .14, .14, .05, 0xffd23f, 0, .96, .385 * fat + .02, 0x443300);
+  cyl(g, .12, .12, .2, sk, 0, 1.72, 0, 6);
+  const head = new THREE.Group(); head.position.y = HY; g.add(head);
+  ball(head, .42, sk, 0, 0, 0).scale.set(1, 1.06, .98);
+  eyes(head, .16, -.02, .4, 1, o.eye || 0x2a5ad0, .39); cone(head, .05, .11, sk, 0, -.1, .43, 4).rotation.x = Math.PI / 2;
+  if (o.frown) [-1, 1].forEach(s => { const b = bx(head, .15, .035, .03, 0x3a2410, s * .16, .12, .41); b.rotation.set(0, s * .39, s * .45); });
+  if (!o.goron) [-1, 1].forEach(s => { cone(head, .1, .34, sk, s * .5, .02, -.02, 4).rotation.z = -s * 1.35; });
+  const hg = new THREE.Group(); hg.rotation.x = -.28; head.add(hg); const back = 4.7124, bl = o.style === 'long' ? 1.2 : o.style === 'bob' ? 1.2 : 1.05, bt = o.style === 'long' ? 2.5 : o.style === 'bob' ? 2.2 : 1.85;
+  if (!o.hat) hairShell(hg, .475, 0, 1.35, 0, 6.2832, hc);
+  hairShell(hg, .475, o.hat ? 1.1 : 1.35, bt - (o.hat ? 1.1 : 1.35), back - bl, bl * 2, hc);
+  if (o.style === 'long') seg(g, V3(0, 2.05, -.3), V3(0, 1.1, -.42), .32, .2, hc, 8);
+  if (o.pony) { const P = [V3(0, 2.3, -.42), V3(0, 2.2, -.8), V3(0, 1.8, -1.0), V3(0, 1.3, -1.0), V3(0, .8, -.9)], R = [.17, .15, .13, .11, .06]; for (let i = 1; i < 5; i++) { seg(g, P[i - 1], P[i], R[i - 1], R[i], hc, 6); ball(g, R[i], hc, P[i].x, P[i].y, P[i].z); } }
+  if (o.cap) { const cp = new THREE.Group(); cp.rotation.x = -.5; head.add(cp); hairShell(cp, .52, 0, 1.2, 0, 6.2832, o.cap);
+    const P = [V3(0, .4, -.36), V3(0, .46, -.74), V3(0, .22, -1.06), V3(0, -.12, -1.16)], R = [.26, .2, .15, .1]; for (let i = 1; i < 4; i++) { seg(head, P[i - 1], P[i], R[i - 1], R[i], o.cap, 6); ball(head, R[i], o.cap, P[i].x, P[i].y, P[i].z); } ball(head, .12, 0xfff1b0, 0, -.2, -1.18); }
+  if (o.hat) { lathe(head, [[.001, .66], [.28, .64], [.42, .52], [.47, .2], [.95, .12], [.97, .06], [.5, .04]], o.hat, 1); lathe(head, [[.47, .22], [.47, .12]], 0x6b3a1a, 1.02); }
+  if (o.mus) [-1, 1].forEach(s => ball(head, .07, hc, s * .08, -.14, .39).scale.set(1.7, .6, .8));
+  if (o.tiara) { cyl(head, .43, .43, .07, 0xffd23f, 0, .27, 0, 8, 0x553300); ball(head, .06, 0x3a7aff, 0, .27, .43, 0x112266); }
+  if (o.triforce) tri(g, .11, 0xffd23f, 0, 1.45, .36 * fat);
+  if (o.sheikah) { const e = flat(g, new THREE.CircleGeometry(.1, 10), 0xffffff, 0, 1.45, .36); e.scale.y = .55; flat(g, new THREE.CircleGeometry(.035, 8), 0xd02020, 0, 1.45, .362); }
+  if (o.gear) { const sh = cyl(g, .38, .38, .07, 0x9a6a30, 0, 1.25, -.43, 8); sh.rotation.x = Math.PI / 2; bx(g, .5, .1, .04, 0xc0392b, 0, 1.25, -.48); const sw = bx(g, .09, .9, .05, 0xcfd8e8, .12, 1.95, -.55); sw.rotation.z = -.3; bx(g, .3, .07, .07, 0xffd23f, .04, 1.52, -.55).rotation.z = -.3; }
+  g.scale.setScalar(k); g.userData = { legL: legs[0], legR: legs[1], armL: arms[0], armR: arms[1] }; return g;
+}
+function goron() {
+  const g = new THREE.Group(), BR = 0x9a5a30, HC = 0x1c1410;
+  const legs = [-.5, .5].map(x => { const l = new THREE.Group(); l.position.set(x, .8, 0); cyl(l, .34, .38, .8, BR, 0, -.4, 0, 7); ball(l, .42, 0x7a4624, 0, -.78, .12).scale.set(1, .55, 1.2); g.add(l); return l; });
+  const arms = [-1, 1].map(s => { const a = new THREE.Group(); a.position.set(s * 1.3, 2.0, 0); ball(a, .42, BR, 0, 0, 0); cyl(a, .34, .3, .9, BR, 0, -.5, 0, 7); ball(a, .42, 0x8a4e28, 0, -1.1, 0); g.add(a); return a; });
+  ball(g, 1, BR, 0, 1.55, 0).scale.set(1.2, 1.05, 1.05); ball(g, .5, 0xb98a60, 0, 1.4, .72).scale.set(1.1, 1, .45);
+  const head = new THREE.Group(); head.position.y = 2.72; g.add(head); ball(head, .58, BR, 0, 0, 0).scale.set(1.05, 1, 1);
+  eyes(head, .22, .04, .55, 1.5, 0x3a2010, .4); [-1, 1].forEach(s => { const b = bx(head, .24, .06, .04, HC, s * .22, .22, .55); b.rotation.set(0, s * .4, s * .4); });
+  ball(head, .1, 0x7a4624, 0, -.05, .6).scale.set(1.2, .9, .9);
+  const hg = new THREE.Group(); hg.rotation.x = -.2; head.add(hg); hairShell(hg, .66, 0, 1.3, 0, 6.2832, HC); hairShell(hg, .66, 1.3, .7, 4.7124 - 1.3, 2.6, HC);
+  const bd = new THREE.Mesh(new THREE.SphereGeometry(.64, 8, 6, 1.5708 - 1.1, 2.2, 1.95, 1.0), matD(HC)); head.add(bd);
+  [-1, 1].forEach(s => ball(g, .17, 0xe8d4a8, s * .45, 2.0, .93)); ball(g, .2, 0xc0392b, 0, 2.05, .98);
+  g.scale.setScalar(.95); g.userData = { legL: legs[0], legR: legs[1], armL: arms[0], armR: arms[1] }; return g;
+}
+
 function owl() {
   const g = new THREE.Group(), br = 0x8a5a34, lt = 0xe8d4a8;
   ball(g, .95, br, 0, 1.1, 0).scale.set(1, 1.2, .9); ball(g, .6, lt, 0, 1, .55).scale.set(1, 1.3, .5);
@@ -53,10 +83,12 @@ function owl() {
   g.userData = { wingL: wl, wingR: wr }; return g;
 }
 const LOOKS = {
-  talon: { body: 0x2b4c7e, hair: 0x5c3a21, hat: 0xb08840, mus: 1, pants: 0x4a3a2a }, mido: { body: 0x82e0aa, hair: 0xd4ac0d, k: .78, pants: 0x3a7a4a, frown: 1 },
-  saria: { body: 0x2ecc71, hair: 0x27ae60, dress: 1, long: 1, belt: 0xffffff }, darunia: { body: 0xd35400, hair: 0xe67e22, k: 1.35, skin: 0xb86a3a, beard: 1, spikes: 1, pants: 0x4a3020, frown: 1 },
-  impa: { body: 0x5b2c6f, hair: 0xecf0f1, dress: 1, long: 1, belt: 0xc0392b, ears: 1, pads: 1 }, zelda: { body: 0xf4a8d0, hair: 0xf7dc6f, dress: 1, long: 1, crown: 1, belt: 0xffd23f, ears: 1 },
-  link: { body: 0x2e9c3a, hair: 0xd9b04a, cap: 0x2e9c3a, pants: 0xf0ead6, belt: 0x7a4a1a, tunic: 1, ears: 1, gear: 1, boot: 0x6a4420 }
+  link: { body: 0x2e9c3a, hair: 0xd9a844, cap: 0x2e9c3a, pants: 0xf5f0dc, belt: 0x7a4a1a, ears: 1, gear: 1, style: 'short', eye: 0x2a5ad0 },
+  saria: { body: 0x2f9e5a, hair: 0x1fc070, style: 'bob', short: 1, belt: 0xe8d890, eye: 0x2a8a60, k: .92 },
+  mido: { body: 0x3d9a4a, hair: 0xd8541f, style: 'short', frown: 1, belt: 0x7a4a1a, k: .82 },
+  talon: { body: 0x3a5fa8, hair: 0x6a4a28, hat: 0xc8a060, mus: 1, fat: 1.22, pants: 0xe8e0c8, belt: 0x5a3a1a, style: 'short', k: 1.1, eye: 0x4a3a20 },
+  impa: { body: 0x34467e, hair: 0xe8eaf2, dress: 1, belt: 0xe8e8f0, cuff: 0xcfd6e8, pony: 1, style: 'short', sheikah: 1, eye: 0xd02020, k: 1.08 },
+  zelda: { body: 0xfbeaf6, skirtCol: 0xf4a6d0, hair: 0xf5d76e, dress: 1, belt: 0x8a50c8, cuff: 0xffd23f, style: 'long', tiara: 1, triforce: 1, eye: 0x2a5ad0, k: .95 }
 };
 function ridge(g, w, d, h, c1, c2, seed, cap) {
   const along = w >= d, L = along ? w : d, T = along ? d : w, n = Math.max(1, Math.round(L / 1.8)), seg = L / n; let s = seed + 1; const r = () => (s = (s * 16807) % 2147483647) / 2147483647;
@@ -117,7 +149,7 @@ function buildGround(scene) {
 function buildWorld(scene) {
   buildGround(scene); obstacles.forEach(o => buildObstacle(o, scene));
   npcs.forEach(n => {
-    const m = n.id === 'kaepora' ? owl() : human(LOOKS[n.id] || { body: 0x888888, hair: 0x444444 }); m.position.set(n.x * S, 0, n.y * S); scene.add(m);
+    const m = n.id === 'kaepora' ? owl() : n.id === 'darunia' ? goron() : human(LOOKS[n.id] || { body: 0x888888, hair: 0x444444 }); m.position.set(n.x * S, 0, n.y * S); scene.add(m);
     const tag = textSprite(n.name, null, '#fff6d8', .9); tag.position.set(n.x * S, (n.id === 'darunia' ? 4.6 : 3.7), n.y * S); scene.add(tag); R3.ents[n.id] = { m, tag, x: n.x * S, z: n.y * S, h: n.id === 'darunia' ? 4.6 : 3.7, npc: n };
   });
   interactables.forEach(o => {
@@ -125,8 +157,10 @@ function buildWorld(scene) {
     if (o.type === 'sign') { bx(g, .2, 1.4, .2, 0x6b4426, 0, .7, 0); bx(g, 1.6, .9, .15, 0xc89a60, 0, 1.6, 0); h = 2.8; }
     else if (o.type === 'chest' || o.type === 'secret_chest') { const c = o.type === 'chest' ? 0x9a6a30 : 0x6a3a8a; bx(g, 1.3, .8, .9, c, 0, .4, 0); const lid = bx(g, 1.3, .35, .9, c, 0, .98, 0); bx(g, .2, .3, .1, 0xffd23f, 0, .8, .48, 0x553300); e.lid = lid; e.dx = 1; h = 2; }
     else if (o.type === 'pedestal') { cyl(g, 1.4, 1.7, .5, 0x8a8aa0, 0, .25, 0, 8); cyl(g, 1, 1, .9, 0xb0b0c8, 0, .95, 0, 8); const t = new THREE.Group(); [[0, .62], [-.55, -.3], [.55, -.3]].forEach(([x, y]) => { const m = new THREE.Mesh(new THREE.CylinderGeometry(.5, .5, .2, 3), mat(0xffd23f, 0x332200)); m.rotation.x = Math.PI / 2; m.position.set(x, y, 0); t.add(m); }); t.position.y = 2.6; g.add(t); e.tri = t; e.light = new THREE.PointLight(0xffe08a, 0, 14); e.light.position.y = 2.6; g.add(e.light); h = 4.6; }
-    else if (o.type === 'bonfire') { cyl(g, 1, 1.2, .4, 0x5a5a66, 0, .2, 0, 8); for (let i = 0; i < 4; i++) { const l = bx(g, .2, 1.3, .2, 0x4a2c14, 0, .8, 0); l.rotation.set(.5, i * 1.57, 0); l.position.set(Math.sin(i * 1.57) * .3, .7, Math.cos(i * 1.57) * .3); l.rotation.set(Math.cos(i * 1.57) * .5, 0, -Math.sin(i * 1.57) * .5); }
-      e.flame = cone(g, .55, 1.6, 0xff8a1f, 0, 1.4, 0, 6); e.flame.material = new THREE.MeshBasicMaterial({ color: 0xffa030 }); e.core = cone(g, .3, 1, 0xfff0a0, 0, 1.2, 0, 6); e.core.material = new THREE.MeshBasicMaterial({ color: 0xfff0a0 });
+    else if (o.type === 'bonfire') {
+      for (let i = 0; i < 7; i++) { const a = i / 7 * 6.283; ball(g, .28, 0x6a6a76, Math.sin(a) * 1.0, .2, Math.cos(a) * 1.0).scale.set(1, .7, 1); }
+      for (let i = 0; i < 5; i++) { const a = i / 5 * 6.283 + .3; seg(g, V3(Math.sin(a) * .75, .3, Math.cos(a) * .75), V3(Math.sin(a) * .12, 1.1, Math.cos(a) * .12), .12, .09, 0x5a3418); }
+      e.flame = cone(g, .5, 1.3, 0xff8a1f, 0, 1.0, 0, 6); e.flame.material = new THREE.MeshBasicMaterial({ color: 0xff8a1f }); e.core = cone(g, .3, .9, 0xffe070, 0, .85, 0, 6); e.core.material = new THREE.MeshBasicMaterial({ color: 0xffe070 });
       e.light = new THREE.PointLight(0xff9a40, 2.2, 18); e.light.position.y = 2; g.add(e.light); const beam = new THREE.Mesh(new THREE.CylinderGeometry(.25, .25, 14, 8, 1, true), new THREE.MeshBasicMaterial({ color: 0xffe08a, transparent: true, opacity: .25 })); beam.position.y = 8; g.add(beam); e.beam = beam; h = 3.4; }
     scene.add(g); const tag = textSprite(o.name, null, '#fff6d8', .8); tag.position.set(o.x * S, h + .3, o.y * S); scene.add(tag); e.tag = tag; e.h = h; R3.ents[o.id] = e;
   });
