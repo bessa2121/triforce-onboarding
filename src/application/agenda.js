@@ -278,9 +278,12 @@ function getFinalReport() {
 function reportCards() {
   const r = getFinalReport(), au = r.autonomia, ag = r.agenda_lideranca;
   const autLevel = au.consultas_kaepora + au.sabios_consultados.length >= 4 ? 'Alta' : (au.consultas_kaepora + au.sabios_consultados.length >= 2 ? 'Boa' : 'Em desenvolvimento');
+  const talk = ag.agendou_primeira_conversa
+    ? `agendou sua primeira conversa de alinhamento (${kEsc(ag.primeira_conversa.tema)}${ag.primeira_conversa.horario ? ', ' + fmtSlot(ag.primeira_conversa.horario) : ''}).`
+    : 'ainda não agendou. O Pedestal Central, abaixo da Zelda, segue disponível.';
   return `
-    <div class="sim-card"><strong>Autonomia (Kaepora Gaebora):</strong> ${au.consultas_kaepora} consulta(s) em ${au.topicos_consultados.length} tópico(s) • ${au.sabios_consultados.length} sábio(s) consultado(s) • nível: ${autLevel}</div>
-    <div class="sim-card"><strong>Conversa com a liderança:</strong> ${ag.agendou_primeira_conversa ? `agendou sua primeira conversa de alinhamento (${kEsc(ag.primeira_conversa.tema)}${ag.primeira_conversa.horario ? ', ' + fmtSlot(ag.primeira_conversa.horario) : ''})` : 'ainda não agendou. O Pedestal Central, abaixo da Zelda, segue disponível.'}</div>`;
+    <div class="vic-wide"><span class="vic-k">Autonomia (Kaepora Gaebora)</span><p>${au.consultas_kaepora} consulta(s) em ${au.topicos_consultados.length} tópico(s) • ${au.sabios_consultados.length} sábio(s) consultado(s) • nível: <b>${autLevel}</b></p></div>
+    <div class="vic-wide"><span class="vic-k">Conversa com a liderança</span><p>${talk}</p></div>`;
 }
 function copyReport() {
   const txt = JSON.stringify(getFinalReport(), null, 2);

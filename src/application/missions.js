@@ -240,17 +240,15 @@ window.addEventListener('keydown', (e) => {
 
 function showVictoryScreen() {
   const acc = gameState.totalAttempts > 0 ? Math.round((gameState.correctAnswers / gameState.totalAttempts) * 100) : 100;
-  const mins = Math.floor(gameState.elapsedSeconds / 60);
-  const secs = gameState.elapsedSeconds % 60;
   const lvlInfo = getLevelInfo(gameState.xp);
-  document.getElementById('victory-stats').innerHTML = `
-    <div class="sim-card"><strong>Missões:</strong> ${gameState.completedMissions.filter(n => n > 0).length}/6</div>
-    <div class="sim-card"><strong>Acertos:</strong> ${gameState.correctAnswers} (${acc}% de aproveitamento)</div>
-    <div class="sim-card"><strong>XP & Nível:</strong> ${gameState.xp} XP (Nv. ${lvlInfo.lvl} • ${lvlInfo.title})</div>
-    <div class="sim-card"><strong>Tempo:</strong> ${mins}m ${secs}s</div>
-    <div class="sim-card"><strong>Rupias:</strong> ${gameState.rupees || 0} • melhor combo x${gameState.bestStreak || 0} • missões sem erro: ${gameState.perfectMissions || 0}</div>
-    <div class="sim-card"><strong>Recompensas:</strong> ${(gameState.rewards || []).length ? REWARD_TIERS.filter(t => gameState.rewards.includes(t.id)).map(t => t.name).join(', ') : 'nenhuma ainda'}</div>
-    <div class="sim-card"><strong>Colecionáveis:</strong> ${(gameState.collectibles || []).length}/2 itens</div>
-    <div class="sim-card"><strong>Conquistas:</strong> ${(gameState.achievements || []).length} desbloqueadas</div>` + reportCards();
+  const rewards = (gameState.rewards || []).length ? REWARD_TIERS.filter(t => gameState.rewards.includes(t.id)).map(t => t.name).join(', ') : 'nenhuma ainda';
+  const tile = (label, value, sub, span) => `<div class="vic-tile" style="grid-column:span ${span || 2}"><span class="vic-k">${label}</span><b class="vic-v">${value}</b>${sub ? `<small>${sub}</small>` : ''}</div>`;
+  document.getElementById('victory-stats').innerHTML =
+    tile('Missões', `${gameState.completedMissions.filter(n => n > 0).length}/6`, 'concluídas')
+    + tile('Acertos', gameState.correctAnswers, `${acc}% de aproveitamento`)
+    + tile('XP & Nível', `${gameState.xp} XP`, `Nv. ${lvlInfo.lvl} • ${lvlInfo.title}`)
+    + tile('Recompensas', `${(gameState.rewards || []).length}`, rewards, 3)
+    + tile('Conquistas', `${(gameState.achievements || []).length}`, 'desbloqueadas', 3)
+    + reportCards();
   document.getElementById('victory-modal').classList.add('active');
 }

@@ -208,18 +208,18 @@
 
   <!-- Victory Modal -->
   <div class="modal-overlay" id="victory-modal">
-    <div class="modal-card" style="text-align:center;">
-      <img class="pix-big pix-all" alt="Triforce" src="" style="margin-bottom:10px">
+    <div class="modal-card vic-card" style="text-align:center;">
+      <img class="pix-big pix-all vic-tri" alt="Triforce" src="">
       <h2 class="modal-title">JORNADA CONCLUÍDA!</h2>
       <p class="modal-subtitle">Link conquistou a Triforce e agora conhece Hyrule!</p>
-      <div class="diary-entry" style="text-align:left;">
+      <div class="diary-entry vic-quote">
         <strong>Navi:</strong> "Você chegou sem conhecer o caminho. Agora sabe onde encontrar ajuda, como utilizar suas ferramentas e como suas ações contribuem para o reino. Mas lembre-se: toda jornada continua com novos aprendizados!"
       </div>
-      <div id="victory-stats" class="minigame-grid" style="text-align:left;"></div>
-      <div class="diary-entry" style="text-align:left; border-left-color:#8ecae6;">
+      <div id="victory-stats" class="vic-grid"></div>
+      <div class="diary-entry vic-quote" style="border-left-color:#8ecae6;">
         <strong>Mensagem Central:</strong> "Você não precisa conhecer todo o reino no primeiro dia. Precisa saber como explorá-lo, com quem contar e como contribuir."
       </div>
-      <div style="display:flex; gap:12px; justify-content:center; flex-wrap:wrap;">
+      <div class="vic-actions">
         <button class="retro-btn primary" onclick="copyReport()">Copiar relatório (JSON)</button>
         <button class="retro-btn" onclick="closeVictory()">Continuar explorando</button>
         <button class="retro-btn gold" onclick="resetGameConfirm()">Jogar Novamente</button>

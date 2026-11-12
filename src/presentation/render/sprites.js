@@ -1,9 +1,9 @@
 /* Spritesheets procedurais: 5 frames (idle, passo A, idle, passo B, piscar) x 4 direções, 18x26 px de arte. */
 const CHARS = {
   link:   { skin:'#f5c79c', hair:'#e9c24a', eye:'#243b9a', hat:'link', hatc:'#3b9d4a', sleeve:'#f2ead0', body:'#3b9d4a', trim:'#e8b53a', pants:'#efe3b8', boot:'#7a4a24', belt:'#7a4a24', gear:1 },
-  saria:  { skin:'#f5c79c', hair:'#4fcf6a', eye:'#1f8f5a', hs:'bob', dot:1, body:'#3fae4f', trim:'#9be07a', pants:'#f5c79c', belt:'#7a4a24', boot:'#7a5a34' },
+  saria:  { skin:'#f5c79c', hair:'#3fd06a', eye:'#2fa8d0', hs:'bob', bangs:1, body:'#2f9e48', trim:'#f4e6a0', sleeve:'#f5c79c', skirt:1, ocarina:1, pants:'#f5c79c', belt:'#8a5a2c', boot:'#7a5a34' },
   darunia:{ skin:'#a9623c', hair:'#3a2a24', eye:'#201010', hs:'spike', body:'#8a4a2c', trim:'#d98a3a', pants:'#5a3a22', boot:'#3a2a1a', bulk:2, brow:1, dot:1, skin2:1 },
-  talon:  { skin:'#f1c19a', hair:'#6a4426', eye:'#2a2a2a', hat:'cap', hatc:'#3a62b4', body:'#e8e0c8', trim:'#3a62b4', pants:'#3a62b4', boot:'#5a3a22', bulk:1, stache:'#6a4426', dot:1, overalls:1 },
+  talon:  { skin:'#f1c19a', hair:'#8a5a2c', eye:'#2a2a2a', hat:'cap', hatc:'#4a86d0', button:1, body:'#efe8d2', sleeve:'#efe8d2', sl:2, trim:'#3a62b4', pants:'#3a62b4', boot:'#5a3a22', bulk:1, belly:1, stache:'#8a5a2c', bigStache:1, nose:'#e07a68', brow:1, dot:1, overalls:1 },
   impa:   { skin:'#e3b28c', hair:'#f2f2f6', eye:'#a02828', hs:'long', hat:'band', band:'#c83a3a', emblem:'eye', body:'#5a4aa0', trim:'#e8b53a', dress:1, boot:'#4a2a5a' },
   mido:   { skin:'#f8d2b0', hair:'#d9402f', eye:'#1a1a1a', hs:'spike', dot:1, body:'#4aa04a', trim:'#e8d27a', pants:'#f8d2b0', belt:'#7a4a24', boot:'#7a5a34', brow:1 },
   zelda:  { skin:'#f8d2b0', hair:'#f0cf55', eye:'#3a6ad0', hs:'long', hat:'crown', body:'#f2c2d8', trim:'#fbe27a', emblem:'tri', dress:1, boot:'#b08a3a' }
@@ -28,33 +28,52 @@ function drawChar(g, s, dir, f, blink) {
     const lh = st > 0 ? 2 : 3, rh = st < 0 ? 2 : 3;
     R(g, 5, 18, 3, lh, pants); R(g, 5, 18 + lh, 3, 2, boot); R(g, 8, 18, 3, rh, pants); R(g, 8, 18 + rh, 3, 2, boot);
   }
-  // --- gear nas costas
-  if (s.gear && (up || sd)) {
-    const sx = up ? 5 : 10; R(g, sx, 11, up ? 6 : 3, 6, '#2e5fb3'); R(g, sx, 13, up ? 6 : 3, 1, PAL.gold1); R(g, sx + 1, 11, 1, 2, '#6f9be0');
-    R(g, up ? 11 : 11, 8, 2, 3, PAL.gold1); P(g, up ? 11 : 11, 7, '#cfd8e8');
+  // --- escudo Hyliano nas costas: de lado, despontando atrás do corpo (de costas é desenhado sobre o tronco, mais adiante)
+  const RIM = '#d6deee', RIM2 = '#8a97b5', SH = '#2e5fb3', SHL = '#4f82d6', RED = '#d8402f';
+  if (s.gear && sd) {
+    R(g, 10, 11, 3, 1, RIM); R(g, 10, 12, 3, 5, SH); R(g, 12, 12, 1, 5, RIM); R(g, 10, 12, 1, 5, SHL); R(g, 11, 17, 2, 1, RIM); R(g, 12, 18, 1, 1, RIM2);
+    P(g, 11, 13, RED); P(g, 11, 14, RED); P(g, 11, 15, PAL.gold1);
   }
   // --- tronco
-  R(g, tx, 11, tw, s.dress ? 5 : 7, bo); R(g, tx + 1, 11, 2, 1, bo3);
-  if (!s.dress) R(g, tx, 17, tw, 1, bo2);
+  R(g, tx, 11, tw, s.dress || s.skirt ? 5 : 7, bo); R(g, tx + 1, 11, 2, 1, bo3);
+  if (!s.dress && !s.skirt) R(g, tx, 17, tw, 1, bo2);
   if (s.overalls) { R(g, tx + 1, 13, tw - 2, 5, pants); if (!sd && !up) { R(g, 5, 11, 1, 2, pants); R(g, 10, 11, 1, 2, pants); P(g, 6, 14, PAL.gold1); P(g, 9, 14, PAL.gold1); } }
   if (s.belt && !s.dress) { R(g, tx, 15, tw, 1, s.belt); if (!sd && !up) R(g, 7, 15, 2, 1, PAL.gold1); }
+  if (s.belly) { R(g, tx - 1, 14, tw + (sd ? 1 : 2), 4, pants); R(g, tx - 1, 14, 2, 1, mix(pants, '#ffffff', .25)); if (!sd && !up) { R(g, 6, 15, 4, 2, mix(pants, '#ffffff', .14)); R(g, 6, 15, 4, 1, mix(pants, '#000000', .25)); } }
+  if (s.overalls && up) { P(g, 5, 12, mix(pants, '#ffffff', .2)); P(g, 6, 13, mix(pants, '#ffffff', .2)); P(g, 10, 12, mix(pants, '#ffffff', .2)); P(g, 9, 13, mix(pants, '#ffffff', .2)); }
+  if (s.skirt) { const cx = sd ? tx + (tw >> 1) : 8; for (let i = 0; i < 3; i++) { const hw = (sd ? 3 : 4) + i; R(g, cx - hw, 16 + i, hw * 2, 1, i === 2 ? s.trim : (i % 2 ? bo2 : bo)); } if (s.belt) R(g, tx, 15, tw, 1, s.belt); }
   if (s.gear && dir === 'down') for (let i = 0; i < 5; i++) P(g, 5 + i, 11 + i, s.belt);
   if (!up && !sd) { R(g, 6, 11, 4, 1, s.trim); R(g, 7, 11, 2, 1, sk2); }
   if (s.emblem === 'tri' && !up && !sd) { P(g, 8, 12, PAL.gold2); P(g, 7, 13, PAL.gold1); P(g, 9, 13, PAL.gold1); R(g, tx, 14, tw, 1, '#8a4ad0'); }
   if (s.emblem === 'eye' && !up && !sd) { R(g, 6, 12, 4, 1, '#c83a3a'); R(g, 7, 13, 2, 1, '#e8e0f0'); P(g, 8, 14, '#c83a3a'); }
   if (s.dress && !up) R(g, tx, 14, tw, 1, s.trim);
+  if (s.gear && up) {   // escudo Hyliano sobre as costas + cabo da espada espiando no ombro
+    [[10, 5, 10], [11, 4, 11], [12, 4, 11], [13, 4, 11], [14, 4, 11], [15, 4, 11], [16, 5, 10], [17, 6, 9], [18, 7, 8]].forEach(([y, x0, x1]) => {
+      R(g, x0, y, x1 - x0 + 1, 1, RIM); if (y > 10 && y < 17) R(g, x0 + 1, y, x1 - x0 - 1, 1, SH);
+    });
+    R(g, 5, 11, 1, 5, SHL); R(g, 4, 16, 1, 1, RIM2); R(g, 11, 16, 1, 1, RIM2);
+    R(g, 7, 11, 2, 1, RED); R(g, 5, 12, 6, 1, RED); R(g, 6, 13, 4, 1, RED); R(g, 7, 14, 2, 1, PAL.gold1); R(g, 6, 15, 4, 1, PAL.gold1);
+    P(g, 8, 14, PAL.gold2);
+    R(g, 1, 6, 1, 1, '#e8e8f0'); R(g, 1, 7, 1, 3, SH); R(g, 0, 10, 3, 1, PAL.gold1);
+  }
   // --- braços
+  const sl = s.sl || 4;
   if (!sd) {
-    R(g, tx - 2, 12 + st, 2, 4, s.sleeve || bo); R(g, tx - 2, 16 + st, 2, 2, sk);
-    R(g, tx + tw, 12 - st, 2, 4, s.sleeve || bo); R(g, tx + tw, 16 - st, 2, 2, sk);
-  } else { R(g, 6 - st, 12, 3, 4, bo3 === bo ? bo : mix(bo, '#ffffff', .12)); R(g, 6 - st, 16, 3, 2, sk); }
+    R(g, tx - 2, 12 + st, 2, sl, s.sleeve || bo); R(g, tx - 2, 12 + sl + st, 2, 6 - sl, sk);
+    R(g, tx + tw, 12 - st, 2, sl, s.sleeve || bo); R(g, tx + tw, 12 + sl - st, 2, 6 - sl, sk);
+    if (s.ocarina && !up) { R(g, 1, 17, 3, 2, '#3d86c0'); P(g, 1, 17, '#9bd0ff'); P(g, 2, 18, '#10305a'); }   // ocarina de fada na mão
+  } else {
+    R(g, 6 - st, 12, 3, sl, bo3 === bo ? bo : mix(bo, '#ffffff', .12)); R(g, 6 - st, 12 + sl, 3, 6 - sl, sk);
+    if (s.ocarina) { R(g, 4, 17, 3, 2, '#3d86c0'); P(g, 4, 17, '#9bd0ff'); P(g, 5, 18, '#10305a'); }
+  }
+  if (s.gear && dir === 'down') { R(g, 13, 10, 2, 1, RIM); R(g, 13, 11, 2, 1, SH); P(g, 14, 12, RIM2); R(g, 1, 6, 1, 1, '#e8e8f0'); R(g, 1, 7, 1, 3, SH); R(g, 0, 10, 3, 1, PAL.gold1); }
   // --- cabeça
   R(g, 3, 2, 10, 9, sk); R(g, 4, 10, 8, 1, sk2);
   g.clearRect(3, 10, 1, 1); g.clearRect(12, 10, 1, 1);
   if (up) {
     R(g, 3, 1, 10, 9, H); R(g, 3, 9, 10, 1, H2); R(g, 5, 2, 3, 1, H3);
     if (s.hs === 'long') { R(g, 3, 10, 10, 5, H); R(g, 3, 14, 10, 1, H2); }
-    if (s.hat === 'link') { R(g, 3, 1, 10, 8, hc); R(g, 4, 2, 3, 1, hc2); R(g, 7, 9, 3, 4, hc); R(g, 8, 13, 2, 1, hc); }
+    if (s.hat === 'link') { R(g, 3, 1, 10, 8, hc); R(g, 4, 2, 3, 1, hc2); if (s.gear) { R(g, 10, 9, 3, 3, hc); R(g, 11, 12, 2, 2, hc); P(g, 12, 14, hc); } else { R(g, 7, 9, 3, 4, hc); R(g, 8, 13, 2, 1, hc); } }
     if (s.hat === 'cap') { R(g, 3, 1, 10, 6, hc); R(g, 4, 2, 3, 1, hc2); }
     if (s.hat === 'crown') { R(g, 4, 1, 8, 1, PAL.gold1); P(g, 4, 0, PAL.gold1); P(g, 7, 0, PAL.gold1); P(g, 11, 0, PAL.gold1); }
   } else {
@@ -66,9 +85,11 @@ function drawChar(g, s, dir, f, blink) {
       if (s.hs === 'bob') { R(g, 3, 4, 2, 6, H); R(g, 11, 4, 2, 6, H); R(g, 3, 9, 2, 1, H2); R(g, 11, 9, 2, 1, H2); }
       if (s.hs === 'long') { R(g, 2, 4, 2, 11, H); R(g, 12, 4, 2, 11, H); R(g, 2, 14, 2, 1, H2); R(g, 12, 14, 2, 1, H2); }
       if (s.hs === 'spike') { P(g, 4, 0, H); P(g, 7, 0, H); P(g, 10, 0, H); P(g, 8, 0, H); }
+      if (s.bangs) { R(g, 5, 4, 6, 1, H); P(g, 7, 5, H); P(g, 9, 5, H); P(g, 4, 5, H); P(g, 11, 5, H); }
     }
     if (sd && s.hs === 'long') R(g, 8, 4, 5, 11, H);
     if (sd && s.hs === 'bob') R(g, 9, 4, 4, 6, H);
+    if (sd && s.bangs) { R(g, 4, 4, 3, 1, H); P(g, 4, 5, H); }
     if (sd && s.hs === 'spike') { P(g, 4, 0, H); P(g, 7, 0, H); P(g, 10, 0, H); }
     // chapéus
     if (s.hat === 'link') {
@@ -76,7 +97,11 @@ function drawChar(g, s, dir, f, blink) {
       if (sd) { R(g, 11, 3, 3, 3, hc); R(g, 12, 6, 2, 4, hc); P(g, 12, 10, hc); } else { R(g, 12, 2, 3, 3, hc); R(g, 13, 5, 2, 3, hc); P(g, 14, 8, hc); }
       if (!sd) { R(g, 4, 5, 2, 1, H); R(g, 9, 5, 3, 1, H); }
     }
-    if (s.hat === 'cap') { R(g, 3, 1, 10, 3, hc); R(g, 4, 1, 3, 1, hc2); if (sd) R(g, 0, 4, 8, 1, mix(hc, '#000000', .3)); else R(g, 2, 4, 12, 1, mix(hc, '#000000', .3)); }
+    if (s.hat === 'cap') {
+      R(g, 3, 1, 10, 3, hc); R(g, 4, 1, 3, 1, hc2);
+      if (s.button) { R(g, 5, 0, 6, 1, hc); P(g, 8, 0, hc2); P(g, 8, -1, mix(hc, '#ffffff', .5)); }
+      if (sd) R(g, s.button ? 1 : 0, 4, s.button ? 7 : 8, 1, mix(hc, '#000000', .3)); else R(g, s.button ? 3 : 2, 4, s.button ? 10 : 12, 1, mix(hc, '#000000', .3));
+    }
     if (s.hat === 'crown') { R(g, 4, 1, 8, 1, PAL.gold1); P(g, 4, 0, PAL.gold1); P(g, 7, 0, PAL.gold1); P(g, 8, 0, PAL.gold1); P(g, 11, 0, PAL.gold1); if (!sd) P(g, 8, 2, '#4aa0e8'); }
     if (s.hat === 'band') { R(g, 3, 3, 10, 1, s.band); if (!sd) P(g, 8, 3, PAL.gold1); }
     // rosto
@@ -86,12 +111,17 @@ function drawChar(g, s, dir, f, blink) {
       else { R(g, 5, 6, 2, 3, s.eye); R(g, 9, 6, 2, 3, s.eye); P(g, 5, 6, '#ffffff'); P(g, 9, 6, '#ffffff'); }
       if (s.brow) { R(g, 5, 5, 3, 1, '#3a1a10'); R(g, 8, 5, 3, 1, '#3a1a10'); }
       P(g, 4, 8, '#f3a08e'); P(g, 11, 8, '#f3a08e');
-      if (s.stache) R(g, 6, 8, 4, 1, s.stache);
+      if (s.nose) { R(g, 7, 7, 2, 2, s.nose); P(g, 7, 7, mix(s.nose, '#ffffff', .45)); }
+      if (s.bigStache) { R(g, 4, 9, 8, 1, s.stache); R(g, 5, 8, 2, 1, s.stache); R(g, 9, 8, 2, 1, s.stache); P(g, 3, 9, s.stache); P(g, 12, 9, s.stache); P(g, 4, 10, s.stache); P(g, 11, 10, s.stache); }
+      else if (s.stache) R(g, 6, 8, 4, 1, s.stache);
       if (s.beard) R(g, 4, 9, 8, 2, s.beard);
     } else {
       if (blink) R(g, 4, 8, 2, 1, '#3a2418'); else if (s.dot) R(g, 4, 7, 1, 2, '#1a1a1a'); else { R(g, 4, 6, 2, 3, s.eye); P(g, 4, 6, '#ffffff'); }
       if (s.brow) R(g, 4, 5, 3, 1, '#3a1a10'); P(g, 2, 7, sk); P(g, 3, 8, '#f3a08e');
-      if (s.stache) R(g, 2, 8, 3, 1, s.stache); if (s.beard) R(g, 3, 9, 5, 2, s.beard);
+      if (s.nose) { R(g, 1, 7, 2, 2, s.nose); P(g, 1, 7, mix(s.nose, '#ffffff', .45)); }
+      if (s.bigStache) { R(g, 1, 9, 5, 1, s.stache); R(g, 2, 8, 3, 1, s.stache); P(g, 2, 10, s.stache); }
+      else if (s.stache) R(g, 2, 8, 3, 1, s.stache);
+      if (s.beard) R(g, 3, 9, 5, 2, s.beard);
     }
   }
   g.restore();

@@ -18,8 +18,9 @@ function portraitArt(g, s) {
   if (s.hs === 'long') { R(g, 6, 10, 3, 18, H); R(g, 23, 10, 3, 18, H); }
   if (s.hs === 'spike') for (let x = 8; x < 24; x += 4) R(g, x, 2, 2, 3, H);
   if (s.hs === 'short') R(g, 7, 10, 2, 4, H);
+  if (s.bangs) { R(g, 10, 10, 12, 1, H); R(g, 11, 11, 3, 1, H); R(g, 18, 11, 3, 1, H); R(g, 15, 11, 2, 1, H); R(g, 12, 12, 1, 1, H); R(g, 19, 12, 1, 1, H); }
   if (s.hat === 'link') { R(g, 7, 4, 18, 7, hc); R(g, 10, 3, 12, 1, hc); R(g, 9, 5, 5, 1, mix(hc, '#fff', .3)); R(g, 7, 10, 18, 1, PAL.gold1); R(g, 23, 6, 5, 6, hc); R(g, 25, 12, 4, 5, hc); R(g, 12, 11, 3, 2, H); R(g, 18, 11, 4, 2, H); }
-  if (s.hat === 'cap') { R(g, 7, 4, 18, 6, hc); R(g, 9, 5, 5, 1, mix(hc, '#fff', .3)); R(g, 5, 10, 22, 2, mix(hc, '#000000', .3)); }
+  if (s.hat === 'cap') { R(g, 7, 4, 18, 6, hc); R(g, 9, 5, 5, 1, mix(hc, '#fff', .3)); if (s.button) { R(g, 10, 3, 12, 1, hc); R(g, 15, 2, 2, 1, mix(hc, '#fff', .45)); R(g, 6, 10, 20, 2, mix(hc, '#000000', .3)); R(g, 5, 11, 22, 1, mix(hc, '#000000', .45)); R(g, 6, 12, 2, 4, H); R(g, 24, 12, 2, 4, H); } else R(g, 5, 10, 22, 2, mix(hc, '#000000', .3)); }
   if (s.hat === 'crown') { R(g, 9, 5, 14, 2, PAL.gold1); for (const x of [9, 14, 19, 22]) R(g, x, 3, 2, 3, PAL.gold1); R(g, 15, 6, 2, 2, '#4aa0e8'); }
   if (s.hat === 'band') { R(g, 7, 9, 18, 2, s.band); R(g, 15, 9, 2, 2, PAL.gold1); }
   const e2 = mix(s.eye, '#000000', .55);
@@ -28,7 +29,9 @@ function portraitArt(g, s) {
   if (s.brow) { R(g, 10, 13, 6, 1, '#3a1a10'); R(g, 17, 13, 6, 1, '#3a1a10'); }
   R(g, 9, 19, 2, 1, '#f3a08e'); R(g, 22, 19, 2, 1, '#f3a08e');
   if (s.emblem === 'tri') { R(g, 15, 29, 2, 1, PAL.gold2); R(g, 14, 30, 4, 1, PAL.gold1); }
-  if (s.stache) R(g, 13, 21, 7, 1, s.stache);
+  if (s.nose) { R(g, 14, 17, 4, 4, s.nose); R(g, 14, 17, 2, 1, mix(s.nose, '#ffffff', .5)); R(g, 17, 20, 1, 1, mix(s.nose, '#000000', .25)); }
+  if (s.bigStache) { R(g, 10, 21, 13, 2, s.stache); R(g, 12, 20, 3, 1, s.stache); R(g, 18, 20, 3, 1, s.stache); R(g, 9, 22, 2, 2, s.stache); R(g, 22, 22, 2, 2, s.stache); R(g, 15, 23, 3, 1, mix(sk, '#7a2a1a', .35)); }
+  else if (s.stache) R(g, 13, 21, 7, 1, s.stache);
   if (s.beard) R(g, 10, 21, 13, 3, s.beard);
 }
 function drawNaviPortrait(g) {
