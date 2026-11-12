@@ -68,7 +68,7 @@ if (mobileInteractBtn) {
 let animTick = 0;
 
 function updatePlayer() {
-  if (!gameState.started || isPaused || isDialogOpen || document.querySelector('.modal-overlay.active')) return;
+  if (!gameState.started || isPaused || isDialogOpen || window.__restBusy || document.querySelector('.modal-overlay.active')) return;
   if (AudioEngine.stepCooldown > 0) AudioEngine.stepCooldown--;
 
   const speed = 3.6 * (hasReward('boots') ? 1.15 : 1);
@@ -92,6 +92,9 @@ function updatePlayer() {
 function checkCollision(x, y, r) {
   for (const o of obstacles) {
     if (x + r > o.x && x - r < o.x + o.w && y + r > o.y && y - r < o.y + o.h) return true;
+  }
+  for (const b of interactables) {
+    if (b.type === 'bonfire' && x + r > b.x - 14 && x - r < b.x + 14 && y + r > b.y - 2 && y - r < b.y + 14) return true;
   }
   return false;
 }

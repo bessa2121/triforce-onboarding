@@ -44,7 +44,7 @@ Percurso: Kokiri Village > Hyrule Field > Lost Woods > Gerudo Valley > Temple of
 As perguntas ficam em `QUIZ` (`src/application/missions.js`) no formato `[cenário, correta, errada1, errada2, errada3, explicação]`; as alternativas são embaralhadas a cada exibição. Save migrado para `link_onboarding_save_v2`. A pasta `link/` é uma cópia antiga e não foi alterada.
 
 ## Kaepora Gaebora: Mentor de Autonomia e Central de Ajuda
-Coruja em Kokiri Village (perto do início). Ao conversar, abre a Central de Ajuda:
+Coruja no jardim da Casa Kokiri, em Kokiri Village (perto do início). Ao conversar, abre a Central de Ajuda:
 - **Busca e menu**: categorias (Acessos, Benefícios, Processos, Dicas de Equipe, Segurança), palavra-chave livre (ignora acentos e caixa) e o atalho "Qual é o meu próximo passo?" (usa a missão atual).
 - **Triagem**: cada resposta indica o NPC/setor, a região e a direção no mapa a partir de onde o jogador está; "Marcar no mapa" coloca uma seta dourada sobre o destino.
 - **Métrica silenciosa**: `gameState.autonomy` guarda visitas, consultas, tópicos, categorias, buscas, destinos marcados e buscas sem resposta (útil para achar lacunas no FAQ). Nada disso aparece para o jogador durante o jogo.
@@ -67,3 +67,7 @@ A tela de vitória mostra autonomia e agenda. "Copiar relatório (JSON)" exporta
 - **Sem corações**: errar não custa vida; zera o combo, mostra a explicação e a pergunta volta depois.
 - **Recompensas**: cada acerto dá XP e rupias (bônus por acertar de primeira e por combo); fim de missão dá bônus, e missão sem erros dá o selo "Mão Firme". Marcos de rupias liberam Botas de Pégaso (100, +15% de velocidade), Bênção de Nayru (300, +25% de XP) e o título Mestre das Rupias (600). Tudo aparece no relatório final.
 - **Minimapa**: canto superior direito; M ou clique alterna entre pequeno e grande. Mostra jogador, campo de visão, sábios pendentes (dourado) e concluídos (verde), Kaepora, Zelda, Pedestal e o destino marcado pela coruja.
+
+## Fogueira (descanso e dashboard)
+Uma fogueira com feixe dourado ao estilo "graça", no centro de Hyrule Field. Interagir (E) mostra a faixa "FOGUEIRA ACESA" (1ª vez: +15 XP, +10 rupias, conquista Chama Acesa), salva o progresso e abre o dashboard: um brilho nasce na chama, o feixe sobe e o painel desabrocha a partir dela, com os cards entrando em cascata (animação em transform/opacity, suave, com suporte a `prefers-reduced-motion`).
+O painel traz missões, progresso do jogo, combo/acertos/jornada, acertos por área (gráfico de linha), domínio por área, trilha de respostas, "Onde você pode melhorar" (temas de revisão calculados pelos erros), tesouros, conquistas e status do Pedestal. Os dados vêm de `gameState.stats` (registrado a cada resposta). A coruja pode indicar a fogueira (pergunta "Onde vejo meu progresso?").

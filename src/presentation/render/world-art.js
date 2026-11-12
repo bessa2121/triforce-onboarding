@@ -160,6 +160,22 @@ function carpet(g) {
   for (let i = 0; i < w; i += 2) { P(g, x + i, y + 5, '#8b3aa8'); P(g, x + i, y + h - 6, '#8b3aa8'); }
 }
 
+/* Jardim da Casa Kokiri: canteiro com borda de pedras, flores e arbustinhos, ao lado do caminho da porta. RNG próprio para não alterar o resto do mapa. */
+function garden(g) {
+  const q = rng(4242), X = 208, Y = 108, W = 34, H = 26;
+  R(g, X + 2, Y + H, W - 2, 3, PAL.shadow);                                  // sombra
+  rr(g, X, Y, W, H, PAL.dirt0); rr(g, X + 1, Y + 1, W - 2, H - 2, PAL.dirt1);  // terra
+  for (let i = 0; i < 26; i++) P(g, X + 3 + (q() * (W - 6) | 0), Y + 3 + (q() * (H - 6) | 0), q() < .5 ? PAL.dirt2 : PAL.dirt0);
+  for (let x = X + 2; x < X + W - 2; x += 4) {                                // pedras na borda (cima e baixo)
+    [Y, Y + H - 2].forEach(yy => { R(g, x, yy, 3, 2, PAL.st1); R(g, x, yy, 3, 1, PAL.st3); });
+  }
+  for (let y = Y + 3; y < Y + H - 3; y += 4) [X, X + W - 2].forEach(xx => { R(g, xx, y, 2, 3, PAL.st1); R(g, xx, y, 2, 1, PAL.st3); });
+  // fileiras de flores nos cantos e tufos de grama
+  for (let i = 0; i < 5; i++) { flower(g, X + 5 + i * 6, Y + 5, q); flower(g, X + 5 + i * 6, Y + H - 6, q); }
+  [[X + 5, Y + 11], [X + W - 6, Y + 11], [X + 5, Y + 15], [X + W - 6, Y + 15]].forEach(([fx, fy]) => { R(g, fx - 1, fy, 3, 2, PAL.gr1); flower(g, fx, fy - 1, q); });
+  // ponto de pouso: pedra chata sob a coruja
+  R(g, X + (W >> 1) - 5, Y + (H >> 1) + 2, 10, 4, PAL.ol); R(g, X + (W >> 1) - 4, Y + (H >> 1) + 2, 8, 3, PAL.st2); R(g, X + (W >> 1) - 4, Y + (H >> 1) + 2, 8, 1, PAL.st3);
+}
 function bakeWorld() {
   const [c, g] = mk(900, 760), r = rng(1337);
   for (let ty = 0; ty < 95; ty++) for (let tx = 0; tx < 113; tx++) { const z = zoneAt(tx * 8, ty * 8); if (z === 'desert') sandCell(g, tx * 8, ty * 8, r); else if (z !== 'plaza') grassCell(g, tx * 8, ty * 8, z, r); }
@@ -177,6 +193,7 @@ function bakeWorld() {
   rr(g, 76, 296, 30, 10, PAL.dirt1);
   trail(g, 336, 364, 200, 470, r, PAL.dirt1, PAL.dirt2); trail(g, 656, 686, 380, 470, r, PAL.dirt1, PAL.dirt2);
   carpet(g); lake(g, r);
+  garden(g);   // jardim da Casa Kokiri (onde a Kaepora fica)
   // decoração plana (sem colisão): flores, tufos altos, cogumelos, pedrinhas
   const blocked = (wx, wy) => obstacles.some(o => wx > o.x - 14 && wx < o.x + o.w + 14 && wy > o.y - 14 && wy < o.y + o.h + 14) ||
     (wy > 310 && wy < 420) || (wy > 400 && wy < 960 && (Math.abs(wx - 700) < 50 || Math.abs(wx - 1340) < 50)) || (wx > 1020 && wx < 1200 && wy > 540 && wy < 660) || [...npcs, ...interactables].some(o => Math.hypot(o.x - wx, o.y - wy) < 40);

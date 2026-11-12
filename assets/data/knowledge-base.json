@@ -7,231 +7,645 @@
     "fallback_route": "pedestal"
   },
   "places": {
-    "talon":    { "label": "Talon (TI / Suporte Técnico)", "where": "na Oficina TI, em Kokiri Village", "how": "Fica na vila onde você começou, ao lado da cerca, perto da Oficina TI." },
-    "mido":     { "label": "Mido (Colega de Equipe)", "where": "na Mesa da Equipe, em Hyrule Field", "how": "Cruze a passagem entre Kokiri Village e Hyrule Field; a Mesa da Equipe fica ao norte do campo." },
-    "saria":    { "label": "Saria (RH / People)", "where": "em Lost Woods", "how": "Desça pela passagem ao sul de Hyrule Field (entre x 640 e 760) e atravesse a floresta." },
-    "darunia":  { "label": "Darunia (Gestor / Liderança)", "where": "em Gerudo Valley", "how": "Cruze Lost Woods até o sul e siga o desfiladeiro a leste." },
-    "impa":     { "label": "Impa (Segurança e Políticas)", "where": "em Temple of Time", "how": "Suba pela passagem ao norte de Gerudo Valley (x 1290 a 1400) até o Templo." },
-    "zelda":    { "label": "Princesa Zelda (Liderança)", "where": "em Temple of Time", "how": "Fica no Templo, logo acima do Pedestal Central." },
-    "pedestal": { "label": "Pedestal Central (agenda com a liderança)", "where": "em Temple of Time, logo abaixo da Princesa Zelda", "how": "Libera depois que você concluir toda a jornada, inclusive o Desafio Final da Zelda." }
+    "talon": {
+      "label": "Talon (TI / Suporte Técnico)",
+      "where": "na Oficina TI, em Kokiri Village",
+      "how": "Fica na vila onde você começou, ao lado da cerca, perto da Oficina TI."
+    },
+    "mido": {
+      "label": "Mido (Colega de Equipe)",
+      "where": "na Mesa da Equipe, em Hyrule Field",
+      "how": "Cruze a passagem entre Kokiri Village e Hyrule Field; a Mesa da Equipe fica ao norte do campo."
+    },
+    "saria": {
+      "label": "Saria (RH / People)",
+      "where": "em Lost Woods",
+      "how": "Desça pela passagem ao sul de Hyrule Field (entre x 640 e 760) e atravesse a floresta."
+    },
+    "darunia": {
+      "label": "Darunia (Gestor / Liderança)",
+      "where": "em Gerudo Valley",
+      "how": "Cruze Lost Woods até o sul e siga o desfiladeiro a leste."
+    },
+    "impa": {
+      "label": "Impa (Segurança e Políticas)",
+      "where": "em Temple of Time",
+      "how": "Suba pela passagem ao norte de Gerudo Valley (x 1290 a 1400) até o Templo."
+    },
+    "zelda": {
+      "label": "Princesa Zelda (Liderança)",
+      "where": "em Temple of Time",
+      "how": "Fica no Templo, logo acima do Pedestal Central."
+    },
+    "pedestal": {
+      "label": "Pedestal Central (agenda com a liderança)",
+      "where": "em Temple of Time, logo abaixo da Princesa Zelda",
+      "how": "Libera depois que você concluir toda a jornada, inclusive o Desafio Final da Zelda."
+    },
+    "bonfire_hyrule": {
+      "label": "Fogueira de Hyrule",
+      "where": "em Hyrule Field, no centro do campo",
+      "how": "Descanse ali para salvar o progresso e abrir o dashboard."
+    }
   },
   "categories": [
-    { "id": "acessos",    "label": "Acessos",           "desc": "Senhas, MFA, ferramentas e documentos" },
-    { "id": "beneficios", "label": "Benefícios",      "desc": "Férias, horas, brindes e RH" },
-    { "id": "processos",  "label": "Processos",      "desc": "Cards, prioridades, prazos e feedback" },
-    { "id": "equipe",     "label": "Dicas de Equipe","icon": "team",   "desc": "Comunicação e convivência no dia a dia" },
-    { "id": "seguranca",  "label": "Segurança",      "desc": "Golpes, ligações, pendrives e redes" }
+    {
+      "id": "acessos",
+      "label": "Acessos",
+      "desc": "Senhas, MFA, ferramentas e documentos"
+    },
+    {
+      "id": "beneficios",
+      "label": "Benefícios",
+      "desc": "Férias, horas, brindes e RH"
+    },
+    {
+      "id": "processos",
+      "label": "Processos",
+      "desc": "Cards, prioridades, prazos e feedback"
+    },
+    {
+      "id": "equipe",
+      "label": "Dicas de Equipe",
+      "icon": "team",
+      "desc": "Comunicação e convivência no dia a dia"
+    },
+    {
+      "id": "seguranca",
+      "label": "Segurança",
+      "desc": "Golpes, ligações, pendrives e redes"
+    }
   ],
   "entries": [
     {
-      "id": "pedir_acesso", "category": "acessos", "npc": "talon",
+      "id": "pedir_acesso",
+      "category": "acessos",
+      "npc": "talon",
       "title": "Como peço acesso a um sistema ou pasta?",
-      "keywords": ["acesso", "acessos", "pasta", "sistema", "permissao", "liberar", "chamado", "ticket", "solicitar"],
+      "keywords": [
+        "acesso",
+        "acessos",
+        "pasta",
+        "sistema",
+        "permissao",
+        "liberar",
+        "chamado",
+        "ticket",
+        "solicitar"
+      ],
       "answer": "Abra um chamado de acesso pelo canal oficial da TI, diga o que precisa e por quê, e avise seu gestor do prazo para pedir prioridade. Nunca use o login de outra pessoa, nem 'só dessa vez'.",
       "tip": "Escreva no chamado: sistema, nível de acesso, motivo e data limite."
     },
     {
-      "id": "senha_bloqueada", "category": "acessos", "npc": "talon",
+      "id": "senha_bloqueada",
+      "category": "acessos",
+      "npc": "talon",
       "title": "Esqueci a senha ou minha conta bloqueou",
-      "keywords": ["senha", "esqueci", "bloqueou", "bloqueada", "login", "redefinir", "resetar", "conta", "entrar"],
+      "keywords": [
+        "senha",
+        "esqueci",
+        "bloqueou",
+        "bloqueada",
+        "login",
+        "redefinir",
+        "resetar",
+        "conta",
+        "entrar"
+      ],
       "answer": "Use a recuperação oficial de senha. Se não funcionar, abra um chamado com a TI. Senha é pessoal: não envie por chat, e-mail ou telefone para ninguém, nem para quem diz ser do suporte.",
       "tip": "Se você não pediu a troca de senha e recebeu um aviso, trate como alerta e reporte."
     },
     {
-      "id": "mfa_nao_pedi", "category": "acessos", "npc": "talon",
+      "id": "mfa_nao_pedi",
+      "category": "acessos",
+      "npc": "talon",
       "title": "Recebi aprovação de MFA que não pedi",
-      "keywords": ["mfa", "autenticacao", "aprovacao", "notificacao", "codigo", "2fa", "duas etapas", "bombardeio"],
+      "keywords": [
+        "mfa",
+        "autenticacao",
+        "aprovacao",
+        "notificacao",
+        "codigo",
+        "2fa",
+        "duas etapas",
+        "bombardeio"
+      ],
       "answer": "Negue todas as aprovações, troque a senha na hora e avise TI/Segurança. Aprovação que você não iniciou significa que alguém provavelmente já tem sua senha. Nunca aprove 'só para parar'.",
       "tip": "Depois de trocar a senha, confira se há dispositivos ou sessões desconhecidas na sua conta."
     },
     {
-      "id": "app_nao_oficial", "category": "acessos", "npc": "talon",
+      "id": "app_nao_oficial",
+      "category": "acessos",
+      "npc": "talon",
       "title": "Posso usar um app gratuito que achei?",
-      "keywords": ["app", "aplicativo", "ferramenta", "gratis", "gratuito", "instalar", "ti-sombra", "ti sombra", "software", "extensao"],
+      "keywords": [
+        "app",
+        "aplicativo",
+        "ferramenta",
+        "gratis",
+        "gratuito",
+        "instalar",
+        "ti-sombra",
+        "ti sombra",
+        "software",
+        "extensao"
+      ],
       "answer": "Se não está na lista oficial, não suba dados da empresa nele. Proponha o app à TI para avaliação de segurança e contrato e siga na ferramenta oficial até a aprovação. Apagar depois não garante que o app não guardou cópias.",
       "tip": "Leve à TI o que o app resolve melhor que a ferramenta atual: isso acelera a análise."
     },
     {
-      "id": "compartilhar_doc", "category": "acessos", "npc": "talon",
+      "id": "compartilhar_doc",
+      "category": "acessos",
+      "npc": "talon",
       "title": "Como compartilho um documento com segurança?",
-      "keywords": ["compartilhar", "compartilhamento", "documento", "link", "externo", "fornecedor", "anexo", "drive", "planilha", "arquivo"],
+      "keywords": [
+        "compartilhar",
+        "compartilhamento",
+        "documento",
+        "link",
+        "externo",
+        "fornecedor",
+        "anexo",
+        "drive",
+        "planilha",
+        "arquivo"
+      ],
       "answer": "Compartilhe o documento oficial por link com o menor privilégio possível: leitura para quem só precisa ler, edição só para quem edita, apenas para o e-mail da pessoa e com data de expiração. Evite link aberto e anexos, que criam cópias soltas.",
       "tip": "Revise quem tem acesso antes de enviar: o documento pode estar mais aberto do que você pensa."
     },
     {
-      "id": "delegar_acesso", "category": "acessos", "npc": "talon",
+      "id": "delegar_acesso",
+      "category": "acessos",
+      "npc": "talon",
       "title": "Vou me ausentar: como passo meu trabalho a um colega?",
-      "keywords": ["licenca", "ausencia", "passagem", "delegar", "delegacao", "substituto", "afastamento", "cobrir"],
+      "keywords": [
+        "licenca",
+        "ausencia",
+        "passagem",
+        "delegar",
+        "delegacao",
+        "substituto",
+        "afastamento",
+        "cobrir"
+      ],
       "answer": "Peça à TI a delegação formal de acesso, deixe cards e documentos atualizados e agende uma conversa de passagem com quem vai assumir. Nunca passe sua senha.",
       "tip": "Um resumo solto no chat não cobre o trabalho em andamento: liste o que está em curso e o que está bloqueado."
     },
     {
-      "id": "beneficios_gerais", "category": "beneficios", "npc": "saria",
+      "id": "beneficios_gerais",
+      "category": "beneficios",
+      "npc": "saria",
       "title": "Quais são meus benefícios e como acesso?",
-      "keywords": ["beneficio", "beneficios", "vale", "refeicao", "alimentacao", "transporte", "saude", "plano", "convenio", "gympass", "auxilio"],
+      "keywords": [
+        "beneficio",
+        "beneficios",
+        "vale",
+        "refeicao",
+        "alimentacao",
+        "transporte",
+        "saude",
+        "plano",
+        "convenio",
+        "gympass",
+        "auxilio"
+      ],
       "answer": "Elegibilidade, valores, prazos de adesão e documentos dos benefícios são definidos pelo RH e podem mudar. Pergunte ao RH pelo canal oficial e confirme por escrito o que vale para o seu contrato (estágio, CLT, etc.).",
       "tip": "Anote datas de corte de adesão: perder o prazo costuma significar esperar o próximo ciclo."
     },
     {
-      "id": "ferias", "category": "beneficios", "npc": "saria",
+      "id": "ferias",
+      "category": "beneficios",
+      "npc": "saria",
       "title": "Como peço férias ou emendo um feriado?",
-      "keywords": ["ferias", "feriado", "emenda", "viagem", "folga", "descanso", "recesso"],
+      "keywords": [
+        "ferias",
+        "feriado",
+        "emenda",
+        "viagem",
+        "folga",
+        "descanso",
+        "recesso"
+      ],
       "answer": "Primeiro alinhe as datas com seu gestor, considerando as entregas. Depois formalize o pedido no sistema de RH dentro da antecedência exigida. Acordo de boca não vale para a folha nem protege você.",
       "tip": "Peça com antecedência e já deixe indicado quem cobre suas tarefas."
     },
     {
-      "id": "horas_extras", "category": "beneficios", "npc": "saria",
+      "id": "horas_extras",
+      "category": "beneficios",
+      "npc": "saria",
       "title": "Fiquei além do horário: e as horas extras?",
-      "keywords": ["hora", "horas", "extra", "extras", "banco", "compensar", "compensacao", "expediente", "jornada", "ponto"],
+      "keywords": [
+        "hora",
+        "horas",
+        "extra",
+        "extras",
+        "banco",
+        "compensar",
+        "compensacao",
+        "expediente",
+        "jornada",
+        "ponto"
+      ],
       "answer": "Horas extras exigem aprovação prévia do gestor e registro no banco de horas. Se já aconteceu, avise o gestor, registre conforme a política e alinhe como proceder da próxima vez. Compensar sozinho, sem avisar, foge da política.",
       "tip": "Trabalho não registrado não protege você nem a empresa."
     },
     {
-      "id": "presentes", "category": "beneficios", "npc": "saria",
+      "id": "presentes",
+      "category": "beneficios",
+      "npc": "saria",
       "title": "Recebi um presente ou convite de fornecedor",
-      "keywords": ["presente", "brinde", "ingresso", "convite", "fornecedor", "conflito", "interesse", "agradecimento"],
+      "keywords": [
+        "presente",
+        "brinde",
+        "ingresso",
+        "convite",
+        "fornecedor",
+        "conflito",
+        "interesse",
+        "agradecimento"
+      ],
       "answer": "Se vem de quem negocia com a empresa e passa do limite da política, recuse com educação e informe o gestor/Compliance. Dividir com o time ou esperar o contrato assinar não elimina a aparência de influência.",
       "tip": "Na dúvida, informe antes de aceitar: informar nunca é erro."
     },
     {
-      "id": "lgpd_dados", "category": "beneficios", "npc": "saria",
+      "id": "lgpd_dados",
+      "category": "beneficios",
+      "npc": "saria",
       "title": "Pediram dados pessoais de clientes ou colegas",
-      "keywords": ["lgpd", "dados", "pessoais", "cpf", "telefone", "lista", "clientes", "privacidade", "titular"],
+      "keywords": [
+        "lgpd",
+        "dados",
+        "pessoais",
+        "cpf",
+        "telefone",
+        "lista",
+        "clientes",
+        "privacidade",
+        "titular"
+      ],
       "answer": "Pergunte a finalidade, direcione ao canal oficial de dados e compartilhe só o mínimo necessário, e só com autorização. Mesmo entre colegas, dado pessoal exige finalidade. Telefone também é dado pessoal.",
       "tip": "Recusar em silêncio deixa o risco aberto: explique e indique o caminho certo."
     },
     {
-      "id": "card_tarefa", "category": "processos", "npc": "talon",
+      "id": "card_tarefa",
+      "category": "processos",
+      "npc": "talon",
       "title": "Como registro uma tarefa no card?",
-      "keywords": ["card", "tarefa", "kanban", "status", "andamento", "registrar", "dependencia", "board", "quadro"],
+      "keywords": [
+        "card",
+        "tarefa",
+        "kanban",
+        "status",
+        "andamento",
+        "registrar",
+        "dependencia",
+        "board",
+        "quadro"
+      ],
       "answer": "O card é a fonte da verdade: título claro, responsável, prazo, link da dependência, status atualizado (ex.: 'Em andamento') e um comentário do que falta. Quem abrir o card sem contexto precisa entender o estado e o bloqueio.",
       "tip": "Atualize o status quando algo mudar, não só no final."
     },
     {
-      "id": "atraso", "category": "processos", "npc": "darunia",
+      "id": "atraso",
+      "category": "processos",
+      "npc": "darunia",
       "title": "Vou atrasar uma entrega, e agora?",
-      "keywords": ["atraso", "atrasar", "atrasado", "prazo", "entrega", "risco", "adiar", "replanejar"],
+      "keywords": [
+        "atraso",
+        "atrasar",
+        "atrasado",
+        "prazo",
+        "entrega",
+        "risco",
+        "adiar",
+        "replanejar"
+      ],
       "answer": "Avise cedo, a quem depende da entrega, com nova data, causa e plano de recuperação. Esconder o risco, mesmo com esforço heroico, tira a escolha de quem depende de você.",
       "tip": "Atualize o card para 'Em risco' com um comentário, nunca sem contexto."
     },
     {
-      "id": "prioridades", "category": "processos", "npc": "darunia",
+      "id": "prioridades",
+      "category": "processos",
+      "npc": "darunia",
       "title": "Dois pedidos urgentes ao mesmo tempo",
-      "keywords": ["prioridade", "prioridades", "urgente", "conflito", "dois pedidos", "demanda", "escolher", "capacidade"],
+      "keywords": [
+        "prioridade",
+        "prioridades",
+        "urgente",
+        "conflito",
+        "dois pedidos",
+        "demanda",
+        "escolher",
+        "capacidade"
+      ],
       "answer": "Exponha o conflito aos dois lados, com prazos e capacidade, peça que decidam a prioridade e siga o que ficar registrado. Hierarquia sozinha não define prioridade e entregar tudo pela metade não serve a ninguém.",
       "tip": "Mostre o que cabe na semana e o que fica de fora: decidir fica mais fácil com número."
     },
     {
-      "id": "pedir_feedback", "category": "processos", "npc": "darunia",
+      "id": "pedir_feedback",
+      "category": "processos",
+      "npc": "darunia",
       "title": "Como peço feedback?",
-      "keywords": ["feedback", "pedir", "retorno", "avaliacao", "opiniao", "melhorar"],
+      "keywords": [
+        "feedback",
+        "pedir",
+        "retorno",
+        "avaliacao",
+        "opiniao",
+        "melhorar"
+      ],
       "answer": "Seja específico e curto: 'o que no relatório ajudaria mais a equipe?'. Silêncio não é aprovação. Pedir cedo permite ajustar antes que o erro se repita.",
       "tip": "Peça logo depois de uma entrega, quando o contexto ainda está fresco."
     },
     {
-      "id": "receber_feedback", "category": "processos", "npc": "darunia",
+      "id": "receber_feedback",
+      "category": "processos",
+      "npc": "darunia",
       "title": "Recebi um feedback que achei injusto",
-      "keywords": ["receber", "critica", "injusto", "defensivo", "reuniao 1:1", "um a um"],
+      "keywords": [
+        "receber",
+        "critica",
+        "injusto",
+        "defensivo",
+        "reuniao 1:1",
+        "um a um"
+      ],
       "answer": "Agradeça, peça um exemplo concreto, explique o contexto em uma frase e transforme o feedback em combinado. Defender-se demais fecha a conversa e concordar só para encerrar não muda nada.",
       "tip": "Termine com um combinado claro: 'a partir de agora eu faço X'."
     },
     {
-      "id": "relatorio_ninguem_le", "category": "processos", "npc": "darunia",
+      "id": "relatorio_ninguem_le",
+      "category": "processos",
+      "npc": "darunia",
       "title": "Acho que ninguém lê o que eu produzo",
-      "keywords": ["relatorio", "impacto", "ninguem le", "utilidade", "valor", "para que serve", "encerrar"],
+      "keywords": [
+        "relatorio",
+        "impacto",
+        "ninguem le",
+        "utilidade",
+        "valor",
+        "para que serve",
+        "encerrar"
+      ],
       "answer": "Pergunte a quem deveria usar qual decisão a entrega apoia e proponha, com o gestor, ajustar ou encerrar. Questionar com método e alinhar é diferente de abandonar sozinho ou inflar o trabalho.",
       "tip": "Entender quem usa sua entrega é o caminho mais rápido para trabalhar no que importa."
     },
     {
-      "id": "conversa_lideranca", "category": "processos", "npc": "pedestal",
+      "id": "conversa_lideranca",
+      "category": "processos",
+      "npc": "pedestal",
       "title": "Quero conversar com a liderança (1:1 ou mentoria)",
-      "keywords": ["lideranca", "gestor", "reuniao", "1:1", "mentoria", "carreira", "agenda", "agendar", "conversa", "audiencia", "marcar"],
+      "keywords": [
+        "lideranca",
+        "gestor",
+        "reuniao",
+        "1:1",
+        "mentoria",
+        "carreira",
+        "agenda",
+        "agendar",
+        "conversa",
+        "audiencia",
+        "marcar"
+      ],
       "answer": "Para dúvidas de projeto, feedback, carreira ou algo que vai além do jogo, use o Pedestal Central: você escolhe tema, data e horário e a conversa é registrada. Ele libera quando você conclui a jornada inteira, depois de tentar resolver o básico com os sábios e comigo.",
       "tip": "Chegue com a dúvida em uma frase e o que você já tentou."
     },
     {
-      "id": "pedir_ajuda", "category": "equipe", "npc": "mido",
+      "id": "pedir_ajuda",
+      "category": "equipe",
+      "npc": "mido",
       "title": "Estou travado: como peço ajuda do jeito certo?",
-      "keywords": ["ajuda", "travado", "duvida", "perguntar", "pedir ajuda", "bloqueado", "problema", "nao sei"],
+      "keywords": [
+        "ajuda",
+        "travado",
+        "duvida",
+        "perguntar",
+        "pedir ajuda",
+        "bloqueado",
+        "problema",
+        "nao sei"
+      ],
       "answer": "Mande uma mensagem completa: o que você tenta fazer, o que já testou, qual o erro e até quando consegue esperar. Assim a pessoa responde sem precisar de reunião. Não espere horas parado nem pergunte de forma vaga no canal geral.",
       "tip": "Modelo: objetivo, o que tentei, resultado, prazo."
     },
     {
-      "id": "fora_horario", "category": "equipe", "npc": "mido",
+      "id": "fora_horario",
+      "category": "equipe",
+      "npc": "mido",
       "title": "Me chamaram fora do horário",
-      "keywords": ["fora do horario", "noite", "fim de semana", "whatsapp", "mensagem", "disponibilidade", "limite"],
+      "keywords": [
+        "fora do horario",
+        "noite",
+        "fim de semana",
+        "whatsapp",
+        "mensagem",
+        "disponibilidade",
+        "limite"
+      ],
       "answer": "Confirme o recebimento e diga quando entrega, e execute no expediente seguinte. Silêncio gera ansiedade em quem depende de você, mas virar o 'herói da noite' cria expectativa de disponibilidade permanente.",
       "tip": "Uma linha basta: 'Recebi, entrego amanhã às 15h'."
     },
     {
-      "id": "discordar", "category": "equipe", "npc": "mido",
+      "id": "discordar",
+      "category": "equipe",
+      "npc": "mido",
       "title": "Discordo do plano da reunião",
-      "keywords": ["discordar", "discordo", "plano", "reuniao", "opiniao", "risco", "decisao", "alternativa"],
+      "keywords": [
+        "discordar",
+        "discordo",
+        "plano",
+        "reuniao",
+        "opiniao",
+        "risco",
+        "decisao",
+        "alternativa"
+      ],
       "answer": "Exponha o risco com um dado e uma alternativa, em tom de proposta, e peça que a decisão final seja registrada. Chat paralelo corrói a confiança e o 'eu avisei' tardio não ajuda ninguém.",
       "tip": "Dado + alternativa + registro da decisão."
     },
     {
-      "id": "credito", "category": "equipe", "npc": "mido",
+      "id": "credito",
+      "category": "equipe",
+      "npc": "mido",
       "title": "Vou usar o trabalho de um colega",
-      "keywords": ["credito", "colega", "autoria", "apresentacao", "contribuicao", "planilha", "reconhecimento"],
+      "keywords": [
+        "credito",
+        "colega",
+        "autoria",
+        "apresentacao",
+        "contribuicao",
+        "planilha",
+        "reconhecimento"
+      ],
       "answer": "Avise o colega antes e cite a contribuição dele na apresentação. Dar crédito constrói reputação e acelera a colaboração. Refazer do zero só para ser 'seu' é retrabalho e esconde a origem.",
       "tip": "Citar em voz alta numa reunião vale mais do que um rodapé."
     },
     {
-      "id": "feedback_colega", "category": "equipe", "npc": "mido",
+      "id": "feedback_colega",
+      "category": "equipe",
+      "npc": "mido",
       "title": "Um colega atrasou o insumo pela terceira vez",
-      "keywords": ["colega", "atrasou", "insumo", "dependencia", "cobrar", "feedback colega", "conflito"],
+      "keywords": [
+        "colega",
+        "atrasou",
+        "insumo",
+        "dependencia",
+        "cobrar",
+        "feedback colega",
+        "conflito"
+      ],
       "answer": "Converse em privado e logo, com fatos e impacto, e pergunte o que ajudaria. Escalar de início quebra a confiança e comentar com terceiros vira fofoca.",
       "tip": "Se não resolver depois da conversa, aí sim leve ao gestor com o histórico."
     },
     {
-      "id": "conduta", "category": "equipe", "npc": "saria",
+      "id": "conduta",
+      "category": "equipe",
+      "npc": "saria",
       "title": "Presenciei uma brincadeira desrespeitosa",
-      "keywords": ["conduta", "assedio", "brincadeira", "desrespeito", "etica", "denuncia", "constrangimento", "respeito"],
+      "keywords": [
+        "conduta",
+        "assedio",
+        "brincadeira",
+        "desrespeito",
+        "etica",
+        "denuncia",
+        "constrangimento",
+        "respeito"
+      ],
       "answer": "O silêncio do grupo é lido como aprovação. Intervenha de forma breve na hora ou fale com a pessoa depois, oferecendo apoio, e lembre do canal de ética, que é sigiloso. Não denuncie em nome dela sem ouvi-la.",
       "tip": "Perguntar 'como posso te apoiar?' respeita a autonomia de quem foi exposto."
     },
     {
-      "id": "vishing", "category": "seguranca", "npc": "impa",
+      "id": "vishing",
+      "category": "seguranca",
+      "npc": "impa",
       "title": "Ligaram dizendo ser da TI e pediram um código",
-      "keywords": ["ligacao", "telefone", "suporte", "codigo", "sms", "vishing", "golpe", "ligaram"],
+      "keywords": [
+        "ligacao",
+        "telefone",
+        "suporte",
+        "codigo",
+        "sms",
+        "vishing",
+        "golpe",
+        "ligaram"
+      ],
       "answer": "Desligue sem informar nada, ligue de volta por um canal oficial e reporte. A TI nunca pede código de MFA. Nome e cargo são fáceis de descobrir e não provam nada.",
       "tip": "Regra de ouro: pare, verifique por outro canal, reporte."
     },
     {
-      "id": "tailgating", "category": "seguranca", "npc": "impa",
+      "id": "tailgating",
+      "category": "seguranca",
+      "npc": "impa",
       "title": "Alguém pediu para segurar a porta",
-      "keywords": ["porta", "portao", "catraca", "cracha", "carona", "tailgating", "entrada", "visitante"],
+      "keywords": [
+        "porta",
+        "portao",
+        "catraca",
+        "cracha",
+        "carona",
+        "tailgating",
+        "entrada",
+        "visitante"
+      ],
       "answer": "Seja cordial, mas peça que a pessoa passe o próprio crachá ou a encaminhe à recepção. Cada pessoa usa o seu crachá. Avisar depois ou confiar na aparência já deixou a pessoa entrar.",
       "tip": "Você não está sendo rude: está protegendo todo mundo."
     },
     {
-      "id": "pendrive", "category": "seguranca", "npc": "impa",
+      "id": "pendrive",
+      "category": "seguranca",
+      "npc": "impa",
       "title": "Achei um pendrive",
-      "keywords": ["pendrive", "usb", "achei", "encontrei", "dispositivo", "malware", "isca"],
+      "keywords": [
+        "pendrive",
+        "usb",
+        "achei",
+        "encontrei",
+        "dispositivo",
+        "malware",
+        "isca"
+      ],
       "answer": "Não conecte em nenhum equipamento. Entregue à Segurança/TI. A curiosidade é a isca, e conectar pode instalar malware. Jogar fora tira a chance de investigar.",
       "tip": "Etiquetas chamativas como 'Salários' ou 'Confidencial' são parte do golpe."
     },
     {
-      "id": "email_executivo", "category": "seguranca", "npc": "impa",
+      "id": "email_executivo",
+      "category": "seguranca",
+      "npc": "impa",
       "title": "E-mail urgente do 'diretor' pedindo pagamento",
-      "keywords": ["email", "e-mail", "diretor", "pagamento", "urgente", "sigilo", "phishing", "bec", "fraude", "transferencia"],
+      "keywords": [
+        "email",
+        "e-mail",
+        "diretor",
+        "pagamento",
+        "urgente",
+        "sigilo",
+        "phishing",
+        "bec",
+        "fraude",
+        "transferencia"
+      ],
       "answer": "Não pague. Confirme por um canal independente (telefone cadastrado), siga o fluxo de aprovação e reporte. Urgência, sigilo e autoridade juntos são o sinal clássico de fraude do executivo.",
       "tip": "Responder ao próprio e-mail é falar com o golpista."
     },
     {
-      "id": "wifi_publico", "category": "seguranca", "npc": "impa",
+      "id": "wifi_publico",
+      "category": "seguranca",
+      "npc": "impa",
       "title": "Rede Wi-Fi pedindo meu login corporativo",
-      "keywords": ["wifi", "wi-fi", "rede", "cafe", "vpn", "internet", "portal", "dados moveis"],
+      "keywords": [
+        "wifi",
+        "wi-fi",
+        "rede",
+        "cafe",
+        "vpn",
+        "internet",
+        "portal",
+        "dados moveis"
+      ],
       "answer": "Não digite credenciais. Use dados móveis ou a VPN oficial e avise a Segurança sobre a rede suspeita. Nome com 'Corp' não significa que a rede é da empresa.",
       "tip": "Senha digitada num portal falso já foi capturada: troque-a se isso aconteceu."
     },
     {
-      "id": "app_permissoes", "category": "seguranca", "npc": "impa",
+      "id": "app_permissoes",
+      "category": "seguranca",
+      "npc": "impa",
       "title": "App pede permissão total no meu e-mail e Drive",
-      "keywords": ["permissao", "permissoes", "oauth", "autorizar", "consent", "app", "integracao", "google", "sincronizar"],
+      "keywords": [
+        "permissao",
+        "permissoes",
+        "oauth",
+        "autorizar",
+        "consent",
+        "app",
+        "integracao",
+        "google",
+        "sincronizar"
+      ],
       "answer": "Negue a permissão e consulte a TI sobre apps homologados. Esse app ganha acesso sem precisar da sua senha nem do MFA. Revogar depois pode ser tarde.",
       "tip": "Login pela conta oficial não torna o app seguro."
+    },
+    {
+      "id": "ver_progresso",
+      "category": "processos",
+      "npc": "bonfire_hyrule",
+      "title": "Onde vejo meu progresso e onde posso melhorar?",
+      "keywords": [
+        "progresso",
+        "dashboard",
+        "desempenho",
+        "resultado",
+        "fogueira",
+        "descansar",
+        "acertos",
+        "revisar",
+        "revisao",
+        "nota",
+        "painel"
+      ],
+      "answer": "Descanse na Fogueira de Hyrule, em Hyrule Field: ela abre o seu dashboard com acertos por área, combo, rupias, trilha de respostas e os temas que valem uma revisão.",
+      "tip": "Descansar também salva o seu progresso."
     }
   ]
 }

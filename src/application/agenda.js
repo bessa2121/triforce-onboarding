@@ -139,7 +139,7 @@ function closePedestal() {
   const m = pedEl('pedestal-modal'); if (!m || !m.classList.contains('active')) return false;
   m.classList.remove('active'); AudioEngine.playMenu(); return true;
 }
-function closeHelperModals() { return closePedestal() || closeKaepora(); }
+function closeHelperModals() { return closePedestal() || closeKaepora() || closeBonfireDash(); }
 
 function renderPedestal(mode, req) {
   const body = pedEl('pedestal-body'), s = schedState(), d = s.draft || {};

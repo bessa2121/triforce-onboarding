@@ -10,6 +10,8 @@ const DEFAULT_STATE = {
   bestStreak: 0,
   rewards: [],        // itens desbloqueados por marcos de rupias
   perfectMissions: 0,
+  stats: { areas: {}, grid: {}, rests: 0 },   // desempenho por área (alimenta o dashboard da fogueira)
+  bonfires: [],       // fogueiras já acesas
   xp: 0,
   correctAnswers: 0,
   totalAttempts: 0,

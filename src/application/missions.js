@@ -107,6 +107,8 @@ function handleObjectInteraction(id) {
     }
   } else if (id === 'pedestal') {
     pedestalInteract();
+  } else if (id.startsWith('bonfire')) {
+    restAtBonfire(id);
   }
 }
 
@@ -171,12 +173,14 @@ window.answerQuiz = function (k) {
   let reward = '';
   if (ok) {
     const r = rewardCorrect(Q.xp, !quiz.missed.has(qi));
+    recordAnswer(quiz.n, qi, true, r.first);
     quiz.xp += r.xp; quiz.rupees += r.rupees; quiz.done++;
     reward = `<div class="reward-line">+${r.xp} XP &bull; +${r.rupees} rupias${r.first ? ' &bull; de primeira' : ''}${r.combo >= 2 ? ' &bull; Combo x' + r.combo : ''}</div>`;
   } else {
     AudioEngine.playError();
     gameState.totalAttempts++;
     if (gameState.streak >= 2) showToast('Combo perdido! Leia a explicação e recomece a sequência.');
+    recordAnswer(quiz.n, qi, false, false);
     gameState.streak = 0; quiz.errors++; quiz.missed.add(qi); quiz.queue.push(qi); saveGame();
   }
   document.getElementById('quiz-fb').innerHTML = `

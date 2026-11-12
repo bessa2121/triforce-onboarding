@@ -71,6 +71,13 @@ const AudioEngine = {
     this.playTone(220, 0.14, 'sawtooth', 0.22);
     setTimeout(() => this.playTone(165, 0.22, 'sawtooth', 0.22), 120);
   },
+  playBonfire() {   // graça: acorde dourado ascendente + brasa grave
+    this.playTone(110, 0.9, 'sine', 0.22);
+    [293, 392, 494, 587, 784].forEach((f, i) => setTimeout(() => this.playTone(f, 0.55, 'triangle', 0.2), 120 + i * 140));
+  },
+  playOcarina() {   // Canção do Tempo (A - D - F, duas vezes), timbre de ocarina
+    [440, 294, 349, 440, 294, 349].forEach((f, i) => setTimeout(() => { this.playTone(f, i % 3 === 2 ? 0.7 : 0.38, 'sine', 0.3); this.playTone(f * 2, 0.3, 'sine', 0.05); }, i * 420));
+  },
   playOwl() {
     this.playTone(330, 0.14, 'sine', 0.3);
     setTimeout(() => this.playTone(262, 0.24, 'sine', 0.3), 170);

@@ -33,6 +33,7 @@ function drawMinimap(tick) {
   // pedestal
   const ped = interactables.find(i => i.id === 'pedestal');
   if (ped) { const un = typeof agendaUnlocked === 'function' && agendaUnlocked(); g.save(); g.translate(ped.x * sx, ped.y * sy); g.rotate(Math.PI / 4); const r = (4 + (un ? pulse * 1.5 : 0)) * k; g.fillStyle = un ? '#7fd8ff' : '#6a7686'; g.fillRect(-r / 1.4, -r / 1.4, r * 1.4, r * 1.4); g.strokeStyle = '#10131c'; g.lineWidth = 1.5; g.strokeRect(-r / 1.4, -r / 1.4, r * 1.4, r * 1.4); g.restore(); }
+  interactables.filter(i => i.type === 'bonfire').forEach(b => { const lit = (gameState.bonfires || []).includes(b.id); dot(b.x, b.y, (lit ? 3.6 : 3) * k, lit ? (Math.floor(tick / 7) % 2 ? '#ff9a2e' : '#ffd25a') : '#a8693a', '#3a1c08'); });
   // NPCs: pendentes em dourado, concluídos em verde, Kaepora em marrom, Zelda em rosa (cinza até a missão final abrir)
   npcs.forEach(n => {
     const m = NPC_MISSION[n.id];

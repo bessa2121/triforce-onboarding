@@ -79,6 +79,12 @@ function renderFrame(tick) {
     if (gameState.guideTarget === n.id) guideArrow(n.x, n.y - 134, tick);
   } }));
   interactables.forEach(o => ents.push({ y: o.y, draw() {
+    if (o.type === 'bonfire') {
+      drawBonfire(o, tick); nameTag(o.name, o.x, o.y + 34);
+      if (near(o)) promptBubble(o.x, o.y - 40, tick);
+      if (gameState.guideTarget === o.id) guideArrow(o.x, o.y - 120, tick);
+      return;
+    }
     const opened = o.type === 'secret_chest' && (gameState.collectibles || []).includes(o.item);
     const spr = o.type === 'sign' ? ENT.sign : o.type === 'chest' ? ENT.chest : o.type === 'secret_chest' ? (opened ? ENT.secretOpen : ENT.secret) : ENT.pedestal;
     ctx.fillStyle = PAL.shadow; ctx.fillRect(snap(o.x) - 16, snap(o.y) + 10, 32, 6);

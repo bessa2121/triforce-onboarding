@@ -56,7 +56,7 @@ const npcs = [
   { id: 'talon', name: 'Talon', role: 'TI / Suporte Técnico', x: 260, y: 560, color: '#2b4c7e', hair: '#5c3a21' },
   { id: 'impa', name: 'Impa', role: 'Segurança e Políticas', x: 1400, y: 270, color: '#5b2c6f', hair: '#ecf0f1' },
   { id: 'mido', name: 'Mido', role: 'Colega de Equipe', x: 830, y: 250, color: '#82e0aa', hair: '#d4ac0d' },
-  { id: 'kaepora', name: 'Kaepora Gaebora', role: 'Mentor de Autonomia', x: 430, y: 480, color: '#8a5a34', hair: '#c89a60' },
+  { id: 'kaepora', name: 'Kaepora Gaebora', role: 'Mentor de Autonomia', x: 450, y: 240, color: '#8a5a34', hair: '#c89a60' },
   { id: 'zelda', name: 'Princesa Zelda', role: 'Liderança de Hyrule', x: 1550, y: 240, color: '#f4c430', hair: '#f7dc6f' }
 ];
 
@@ -67,6 +67,7 @@ const interactables = [
   { id: 'chest_tools', name: 'Baú de Ferramentas', x: 700, y: 550, type: 'chest' },
   { id: 'chest_secret_1', name: 'Baú Secreto da Floresta', x: 95, y: 240, type: 'secret_chest', item: 'Bússola de Kokiri', xp: 45 },
   { id: 'chest_secret_2', name: 'Baú do Lago', x: 1120, y: 580, type: 'secret_chest', item: 'Escudo da Segurança', xp: 60 },
-  { id: 'pedestal', name: 'Pedestal Central', x: 1550, y: 390, type: 'pedestal' }
+  { id: 'pedestal', name: 'Pedestal Central', x: 1550, y: 390, type: 'pedestal' },
+  { id: 'bonfire_hyrule', name: 'Fogueira de Hyrule', x: 860, y: 470, type: 'bonfire' }
 ];
 
