@@ -1,5 +1,5 @@
 /* Renderizador 3D (Three.js): modelagem low-poly procedural. Lê o mesmo mundo 2D (world.js): (x,y) do mapa -> (x*S, 0, y*S). */
-const S = 0.05, R3 = { yaw: 0.0, pitch: 0.58, dist: 9, jump: { y: 0, v: 0, n: 0 }, face: 0, walk: 0, ents: {}, fog: new THREE.Color(0x9ad0f0) };
+const S = 0.05, R3 = { yaw: 0.0, pitch: 0.58, dist: 12, jump: { y: 0, v: 0, n: 0 }, face: 0, walk: 0, ents: {}, fog: new THREE.Color(0x9ad0f0) };
 const MAT = {}; const mat = (c, e) => MAT[c + (e || '')] || (MAT[c + (e || '')] = new THREE.MeshLambertMaterial({ color: c, flatShading: true, emissive: e || 0x000000 }));
 function bx(g, w, h, d, c, x, y, z, e) { const m = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), mat(c, e)); m.position.set(x, y, z); m.castShadow = m.receiveShadow = true; g.add(m); return m; }
 function cone(g, r, h, c, x, y, z, seg) { const m = new THREE.Mesh(new THREE.ConeGeometry(r, h, seg || 6), mat(c)); m.position.set(x, y, z); m.castShadow = true; g.add(m); return m; }
@@ -9,11 +9,11 @@ function W(o) { return { x: (o.x + (o.w || 0) / 2) * S, z: (o.y + (o.h || 0) / 2
 
 function textSprite(text, bg, fg, scale) {
   const c = document.createElement('canvas'); c.width = 256; c.height = 64; const g = c.getContext('2d');
-  g.font = '34px VT323, monospace'; g.textAlign = 'center'; g.textBaseline = 'middle';
+  let fs = 34; g.font = fs + 'px VT323, monospace'; while (g.measureText(text).width > 236 && fs > 14) { fs -= 2; g.font = fs + 'px VT323, monospace'; } g.textAlign = 'center'; g.textBaseline = 'middle';
   if (bg) { g.fillStyle = bg; g.fillRect(0, 8, 256, 48); g.strokeStyle = '#2a1608'; g.lineWidth = 4; g.strokeRect(2, 10, 252, 44); }
   g.lineWidth = 6; g.strokeStyle = '#1a1208'; if (!bg) g.strokeText(text, 128, 34); g.fillStyle = fg || '#fff6d8'; g.fillText(text, 128, 34);
   const s = new THREE.Sprite(new THREE.SpriteMaterial({ map: new THREE.CanvasTexture(c), transparent: true, depthTest: false }));
-  s.scale.set(4 * (scale || 1), 1 * (scale || 1), 1); s.renderOrder = 9; return s;
+  s.scale.set(2.6 * (scale || 1), .65 * (scale || 1), 1); s.renderOrder = 9; return s;
 }
 
 function human(o) {
@@ -111,7 +111,7 @@ function initRenderer3D() {
 function resize3D() { if (!R3.r) return; R3.r.setSize(window.innerWidth, window.innerHeight); R3.cam.aspect = window.innerWidth / window.innerHeight; R3.cam.updateProjectionMatrix(); }
 
 const SKY = { 'Kokiri Village': [0x9ad8f4, 0x5fae4c, .9], 'Hyrule Field': [0x8ccaf6, 0x78c060, 1], 'Temple of Time': [0xa8b8e8, 0x8a8ab8, .85], 'Lost Woods': [0x2a5a48, 0x1a3a22, .5], 'Gerudo Valley': [0xf2c47c, 0xc8a064, 1.05] };
-const _c = new THREE.Color();
+const _c = new THREE.Color(), _v = new THREE.Vector3();
 function updateWorld3D(tick) {
   const p = gameState.player, px = p.x * S, pz = p.y * S, J = R3.jump, t = tick / 60;
   // pulo + pulo duplo (Espaço)
@@ -121,7 +121,7 @@ function updateWorld3D(tick) {
   R3.navi.position.set(px + Math.sin(t * 2.4) * 1.1, J.y + 3.3 + Math.sin(t * 3) * .3, pz + Math.cos(t * 2.4) * 1.1);
   // câmera de terceira pessoa
   const cp = Math.cos(R3.pitch), tx = px, ty = 1.6 + J.y * .5, tz = pz;
-  R3.cam.position.lerp(_c.set(tx + Math.sin(R3.yaw) * cp * R3.dist, ty + Math.sin(R3.pitch) * R3.dist, tz + Math.cos(R3.yaw) * cp * R3.dist), .2); R3.cam.lookAt(tx, ty, tz);
+  if (!R3.camInit) { R3.cam.position.set(tx, ty + 7, tz + 12); R3.camInit = 1; } R3.cam.position.lerp(_v.set(tx + Math.sin(R3.yaw) * cp * R3.dist, ty + Math.sin(R3.pitch) * R3.dist, tz + Math.cos(R3.yaw) * cp * R3.dist), .2); R3.cam.lookAt(tx, ty, tz);
   R3.sun.position.set(px + 30, 50, pz + 20); R3.sun.target.position.set(px, 0, pz);
   // clima por região
   const reg = regionAt(p.x, p.y), k = SKY[reg]; R3.fog.lerp(_c.set(k[0]), .03); R3.scene.background.copy(R3.fog); R3.scene.fog.color.copy(R3.fog); R3.scene.fog.far = reg === 'Lost Woods' ? 70 : 120; R3.hemi.intensity += (k[2] - R3.hemi.intensity) * .03; R3.sun.intensity = k[2] * .9;
